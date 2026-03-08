@@ -3426,7 +3426,11 @@ class myNN(Model):
         return change > 1e-6
 
     def k_set_value(self, x, value):
-        value = np.asarray(value, dtype=x.dtype)
+        try:
+            dtype_val = x.dtype.as_numpy_dtype
+        except AttributeError:
+            dtype_val = x.dtype
+        value = np.asarray(value, dtype=dtype_val)
         x.assign(value)
 
     def logTraining(self, epoch, mse, bestLoss, mse_unweighted=None):
