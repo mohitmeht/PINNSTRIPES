@@ -13,7 +13,7 @@ from keras import layers, regularizers
 from keras.backend import set_floatx
 from myNN import *
 
-set_floatx("float64")
+set_floatx("float32")
 
 from forwardPass import (
     from_param_list_to_str,

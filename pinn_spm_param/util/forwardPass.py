@@ -10,7 +10,7 @@ from keras import layers, regularizers
 from keras.backend import set_floatx
 from myNN import *
 
-set_floatx("float64")
+set_floatx("float32")
 
 from init_pinn import initialize_nn_from_params_config
 
@@ -39,7 +39,7 @@ def rescale_param_list(nn, param_list):
     ]
 
 
-def var_from_x(x_arr, dummyVal=np.float64(0.0)):
+def var_from_x(x_arr, dummyVal=np.float32(0.0)):
     var_simp = [None] * x_arr.shape[1]
     var_full = [None] * max(x_arr.shape[1], 2)
     var_simp = [x_arr[:, i] for i in range(x_arr.shape[1])]
@@ -47,11 +47,11 @@ def var_from_x(x_arr, dummyVal=np.float64(0.0)):
     if x_arr.shape[1] == 2:
         var_full[1] = var_simp[1]
     else:
-        var_full[1] = dummyVal * np.ones(x_arr.shape[0], dtype=np.float64)
+        var_full[1] = dummyVal * np.ones(x_arr.shape[0], dtype=np.float32)
     return var_simp, var_full
 
 
-def rescale_var_list(nn, var_list, dummyVal=np.float64(0.0)):
+def rescale_var_list(nn, var_list, dummyVal=np.float32(0.0)):
     var_list_resc = [None] * len(var_list)
     var_list_resc_full = [None] * max(len(var_list), 2)
     var_list_resc[nn.ind_t] = var_list[nn.ind_t] / nn.params["rescale_T"]
@@ -62,7 +62,7 @@ def rescale_var_list(nn, var_list, dummyVal=np.float64(0.0)):
     else:
         var_list_resc_full[nn.ind_r] = (
             dummyVal
-            * np.ones(var_list_resc_full[nn.ind_t].shape, dtype=np.float64)
+            * np.ones(var_list_resc_full[nn.ind_t].shape, dtype=np.float32)
             / nn.params["rescale_R"]
         )
     return var_list_resc, var_list_resc_full
@@ -76,27 +76,27 @@ def make_data_dict(dataFolder, param_list=None):
     data_phie = np.load(
         os.path.join(dataFolder, f"data_phie{param_string}.npz")
     )
-    data_dict["var_phie"] = data_phie["x_test"].astype("float64")
-    data_dict["phie"] = data_phie["y_test"].astype("float64")
-    data_dict["params_phie"] = data_phie["x_params_test"].astype("float64")
+    data_dict["var_phie"] = data_phie["x_test"].astype("float32")
+    data_dict["phie"] = data_phie["y_test"].astype("float32")
+    data_dict["params_phie"] = data_phie["x_params_test"].astype("float32")
     data_phis_c = np.load(
         os.path.join(dataFolder, f"data_phis_c{param_string}.npz")
     )
-    data_dict["var_phis_c"] = data_phis_c["x_test"].astype("float64")
-    data_dict["phis_c"] = data_phis_c["y_test"].astype("float64")
-    data_dict["params_phis_c"] = data_phis_c["x_params_test"].astype("float64")
+    data_dict["var_phis_c"] = data_phis_c["x_test"].astype("float32")
+    data_dict["phis_c"] = data_phis_c["y_test"].astype("float32")
+    data_dict["params_phis_c"] = data_phis_c["x_params_test"].astype("float32")
     data_cs_a = np.load(
         os.path.join(dataFolder, f"data_cs_a{param_string}.npz")
     )
-    data_dict["var_cs_a"] = data_cs_a["x_test"].astype("float64")
-    data_dict["cs_a"] = data_cs_a["y_test"].astype("float64")
-    data_dict["params_cs_a"] = data_cs_a["x_params_test"].astype("float64")
+    data_dict["var_cs_a"] = data_cs_a["x_test"].astype("float32")
+    data_dict["cs_a"] = data_cs_a["y_test"].astype("float32")
+    data_dict["params_cs_a"] = data_cs_a["x_params_test"].astype("float32")
     data_cs_c = np.load(
         os.path.join(dataFolder, f"data_cs_c{param_string}.npz")
     )
-    data_dict["var_cs_c"] = data_cs_c["x_test"].astype("float64")
-    data_dict["cs_c"] = data_cs_c["y_test"].astype("float64")
-    data_dict["params_cs_c"] = data_cs_c["x_params_test"].astype("float64")
+    data_dict["var_cs_c"] = data_cs_c["x_test"].astype("float32")
+    data_dict["cs_c"] = data_cs_c["y_test"].astype("float32")
+    data_dict["params_cs_c"] = data_cs_c["x_params_test"].astype("float32")
 
     return data_dict
 
@@ -239,7 +239,7 @@ def pinn_pred_struct(nn, params_list):
             axis=3,
         ),
         (n_r * n_t * n_par * n_par, 1),
-    ).astype("float64")
+    ).astype("float32")
     r_a = np.reshape(
         np.repeat(
             np.repeat(np.repeat(r_test_a, n_t, axis=0), n_par, axis=2),
@@ -247,11 +247,11 @@ def pinn_pred_struct(nn, params_list):
             axis=3,
         ),
         (n_r * n_t * n_par * n_par, 1),
-    ).astype("float64")
+    ).astype("float32")
     r_surf_a = np.reshape(
         np.linspace(rmax_a, rmax_a, n_t * n_r * n_par * n_par),
         (n_t * n_r * n_par * n_par, 1),
-    ).astype("float64")
+    ).astype("float32")
 
     t_test_c = np.reshape(np.linspace(tmin, tmax, n_t), (n_t, 1, 1, 1))
     r_test_c = np.reshape(np.linspace(rmin, rmax_c, n_r), (1, n_r, 1, 1))
@@ -262,7 +262,7 @@ def pinn_pred_struct(nn, params_list):
             axis=3,
         ),
         (n_r * n_t * n_par * n_par, 1),
-    ).astype("float64")
+    ).astype("float32")
     r_c = np.reshape(
         np.repeat(
             np.repeat(np.repeat(r_test_c, n_t, axis=0), n_par, axis=2),
@@ -270,17 +270,17 @@ def pinn_pred_struct(nn, params_list):
             axis=3,
         ),
         (n_r * n_t * n_par * n_par, 1),
-    ).astype("float64")
+    ).astype("float32")
     r_surf_c = np.reshape(
         np.linspace(rmax_c, rmax_c, n_t * n_r * n_par * n_par),
         (n_t * n_r * n_par * n_par, 1),
-    ).astype("float64")
+    ).astype("float32")
     params_r_unr = [
-        np.ones((n_t * n_r, 1), dtype=np.float64) * entry
+        np.ones((n_t * n_r, 1), dtype=np.float32) * entry
         for ientry, entry in enumerate(params_list)
     ]
     params_r = [
-        np.ones((n_t * n_r, 1), dtype=np.float64)
+        np.ones((n_t * n_r, 1), dtype=np.float32)
         * nn.rescale_param(entry, ientry)
         for ientry, entry in enumerate(params_list)
     ]

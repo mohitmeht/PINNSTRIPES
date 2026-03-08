@@ -53,17 +53,17 @@ def make_sim_config(t_dom, r_dom):
 
 
 def init_arrays(n_t, n_r):
-    phie = np.zeros(n_t, dtype=np.float64)
-    phis_c = np.zeros(n_t, dtype=np.float64)
-    cs_a = np.zeros((n_t, n_r), dtype=np.float64)
-    cs_c = np.zeros((n_t, n_r), dtype=np.float64)
-    Ds_a = np.zeros(n_r, dtype=np.float64)
-    Ds_c = np.zeros(n_r, dtype=np.float64)
-    rhs_a = np.zeros(n_r, dtype=np.float64)
-    rhs_c = np.zeros(n_r, dtype=np.float64)
-    A = np.zeros((n_r, n_r), dtype=np.float64)
-    B_a = np.zeros(n_r, dtype=np.float64)
-    B_c = np.zeros(n_r, dtype=np.float64)
+    phie = np.zeros(n_t, dtype=np.float32)
+    phis_c = np.zeros(n_t, dtype=np.float32)
+    cs_a = np.zeros((n_t, n_r), dtype=np.float32)
+    cs_c = np.zeros((n_t, n_r), dtype=np.float32)
+    Ds_a = np.zeros(n_r, dtype=np.float32)
+    Ds_c = np.zeros(n_r, dtype=np.float32)
+    rhs_a = np.zeros(n_r, dtype=np.float32)
+    rhs_c = np.zeros(n_r, dtype=np.float32)
+    A = np.zeros((n_r, n_r), dtype=np.float32)
+    B_a = np.zeros(n_r, dtype=np.float32)
+    B_c = np.zeros(n_r, dtype=np.float32)
 
     return {
         "ce": 0,
@@ -98,10 +98,10 @@ def tridiag(ds, dt, dr):
 
 
 def rhs(dt, r, ddr_cs, ds, ddDs_cs, cs, bound_grad):
-    rhs_col = np.zeros(len(r), dtype=np.float64)
+    rhs_col = np.zeros(len(r), dtype=np.float32)
     rhs_col = (
         dt
-        * (np.float64(2.0) / np.clip(r, a_min=1e-12, a_max=None))
+        * (np.float32(2.0) / np.clip(r, a_min=1e-12, a_max=None))
         * ddr_cs
         * ds
     )
@@ -208,9 +208,9 @@ def integration(
         Uocp_a = params["Uocp_a"](cse_a, params["csanmax"])
         if not LINEARIZE_J:
             sol["phie"][i_t] = (
-                -(np.float64(2.0) * params["R"] * params["T"] / params["F"])
+                -(np.float32(2.0) * params["R"] * params["T"] / params["F"])
                 * np.arcsinh(
-                    sol["j_a"] * params["F"] / (np.float64(2.0) * i0_a)
+                    sol["j_a"] * params["F"] / (np.float32(2.0) * i0_a)
                 )
                 - Uocp_a
             )
@@ -235,9 +235,9 @@ def integration(
         Uocp_c = params["Uocp_c"](cse_c, params["cscamax"])
         if not LINEARIZE_J:
             sol["phis_c"][i_t] = (
-                (np.float64(2.0) * params["R"] * params["T"] / params["F"])
+                (np.float32(2.0) * params["R"] * params["T"] / params["F"])
                 * np.arcsinh(
-                    sol["j_c"] * params["F"] / (np.float64(2.0) * i0_c)
+                    sol["j_c"] * params["F"] / (np.float32(2.0) * i0_c)
                 )
                 + Uocp_c
                 + sol["phie"][i_t]
@@ -259,7 +259,7 @@ def integration(
                     grad_ds_a_cs_a(params["T"], params["R"])
                 )
             else:
-                gradDs_a_cs_a = np.zeros(len(sol["Ds_a"]), dtype=np.float64)
+                gradDs_a_cs_a = np.zeros(len(sol["Ds_a"]), dtype=np.float32)
 
             ddr_csa = np.gradient(
                 sol["cs_a"][i_t - 1, :], r_a, axis=0, edge_order=2
@@ -290,7 +290,7 @@ def integration(
                 params["R"],
                 params["cscamax"],
                 deg_ds_c
-                * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float64),
+                * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float32),
             )
             if EXACT_GRAD_DS_CS:
                 gradDs_c_cs_c = grad_ds_c_cs_c(
@@ -303,7 +303,7 @@ def integration(
                 Ds_c_tmp1 = params["D_s_c"](
                     np.clip(
                         sol["cs_c"][i_t - 1, :]
-                        + np.ones(sol["cs_c"].shape[1], dtype=np.float64)
+                        + np.ones(sol["cs_c"].shape[1], dtype=np.float32)
                         * GRAD_STEP,
                         a_min=0,
                         a_max=params["cscamax"],
@@ -312,12 +312,12 @@ def integration(
                     params["R"],
                     params["cscamax"],
                     deg_ds_c
-                    * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float64),
+                    * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float32),
                 )
                 Ds_c_tmp2 = params["D_s_c"](
                     np.clip(
                         sol["cs_c"][i_t - 1, :]
-                        - np.ones(sol["cs_c"].shape[1], dtype=np.float64)
+                        - np.ones(sol["cs_c"].shape[1], dtype=np.float32)
                         * GRAD_STEP,
                         a_min=0,
                         a_max=params["cscamax"],
@@ -326,7 +326,7 @@ def integration(
                     params["R"],
                     params["cscamax"],
                     deg_ds_c
-                    * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float64),
+                    * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float32),
                 )
                 gradDs_c_cs_c = (
                     (Ds_c_tmp1 - Ds_c_tmp2) / (2 * GRAD_STEP)
@@ -362,7 +362,7 @@ def integration(
             )
             ddr_csa[0] = 0
             ddr_csa[-1] = -sol["j_a"] / sol["Ds_a"][-1]
-            ddr2_csa = np.zeros(n_r, dtype=np.float64)
+            ddr2_csa = np.zeros(n_r, dtype=np.float32)
             ddr2_csa[1 : n_r - 1] = (
                 sol["cs_a"][i_t - 1, : n_r - 2]
                 - 2 * sol["cs_a"][i_t - 1, 1 : n_r - 1]
@@ -398,14 +398,14 @@ def integration(
                 params["R"],
                 params["cscamax"],
                 deg_ds_c
-                * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float64),
+                * np.ones(sol["cs_c"][i_t - 1, :].shape, dtype=np.float32),
             )
             ddr_csc = np.gradient(
                 sol["cs_c"][i_t - 1, :], r_c, axis=0, edge_order=2
             )
             ddr_csc[0] = 0
             ddr_csc[-1] = -sol["j_c"] / sol["Ds_c"][-1]
-            ddr2_csc = np.zeros(n_r, dtype=np.float64)
+            ddr2_csc = np.zeros(n_r, dtype=np.float32)
             ddr2_csc[1 : n_r - 1] = (
                 sol["cs_c"][i_t - 1, : n_r - 2]
                 - 2 * sol["cs_c"][i_t - 1, 1 : n_r - 1]

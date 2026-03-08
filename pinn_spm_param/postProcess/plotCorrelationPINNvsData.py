@@ -12,7 +12,7 @@ from keras.backend import set_floatx
 from myNN import *
 from plotsUtil_batt import *
 
-set_floatx("float64")
+set_floatx("float32")
 
 from init_pinn import initialize_nn_from_params_config, safe_load
 

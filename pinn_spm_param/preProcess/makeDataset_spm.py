@@ -41,15 +41,15 @@ if input_params:
     )
 else:
     data = np.load(os.path.join(dataFolder, "solution.npz"))
-t = data["t"][::freqT].astype("float64")
-r_a = data["r_a"].astype("float64")
-r_c = data["r_c"].astype("float64")
+t = data["t"][::freqT].astype("float32")
+r_a = data["r_a"].astype("float32")
+r_c = data["r_c"].astype("float32")
 
 # state
-phie = data["phie"][::freqT].astype("float64")
-phis_c = data["phis_c"][::freqT].astype("float64")
-cs_a = data["cs_a"][::freqT, :].astype("float64")
-cs_c = data["cs_c"][::freqT, :].astype("float64")
+phie = data["phie"][::freqT].astype("float32")
+phis_c = data["phis_c"][::freqT].astype("float32")
+cs_a = data["cs_a"][::freqT, :].astype("float32")
+cs_c = data["cs_c"][::freqT, :].astype("float32")
 
 n_r = len(r_a)
 n_t = len(t)
@@ -69,11 +69,11 @@ r_c_2d_flatten = np.reshape(r_c_2d, (n_r * n_t, 1))
 # Phie
 t_phie = t_1d
 # Assemble
-x = t_phie.astype("float64")
+x = t_phie.astype("float32")
 x_params = np.zeros((x.shape[0], 2))
 x_params[:, 0] = deg_i0_a
 x_params[:, 1] = deg_ds_c
-y = np.reshape(phie, (len(phie), 1)).astype("float64")
+y = np.reshape(phie, (len(phie), 1)).astype("float32")
 (
     x_train,
     x_test,
@@ -107,11 +107,11 @@ else:
 # Phis_c
 t_phis_c = t_1d
 # Assemble
-x = t_phis_c.astype("float64")
+x = t_phis_c.astype("float32")
 x_params = np.zeros((x.shape[0], 2))
 x_params[:, 0] = deg_i0_a
 x_params[:, 1] = deg_ds_c
-y = np.reshape(phis_c, (len(phis_c), 1)).astype("float64")
+y = np.reshape(phis_c, (len(phis_c), 1)).astype("float32")
 (
     x_train,
     x_test,
@@ -147,11 +147,11 @@ else:
 # cs anode
 cs_a = np.reshape(cs_a, (n_t * n_r, 1))
 # Assemble
-x = np.hstack((t_2d_flatten, r_a_2d_flatten)).astype("float64")
+x = np.hstack((t_2d_flatten, r_a_2d_flatten)).astype("float32")
 x_params = np.zeros((x.shape[0], 2))
 x_params[:, 0] = deg_i0_a
 x_params[:, 1] = deg_ds_c
-y = np.reshape(cs_a, (len(cs_a), 1)).astype("float64")
+y = np.reshape(cs_a, (len(cs_a), 1)).astype("float32")
 (
     x_train,
     x_test,
@@ -186,11 +186,11 @@ else:
 # cs cathode
 cs_c = np.reshape(cs_c, (n_t * n_r, 1))
 # Assemble
-x = np.hstack((t_2d_flatten, r_c_2d_flatten)).astype("float64")
+x = np.hstack((t_2d_flatten, r_c_2d_flatten)).astype("float32")
 x_params = np.zeros((x.shape[0], 2))
 x_params[:, 0] = deg_i0_a
 x_params[:, 1] = deg_ds_c
-y = np.reshape(cs_c, (len(cs_c), 1)).astype("float64")
+y = np.reshape(cs_c, (len(cs_c), 1)).astype("float32")
 (
     x_train,
     x_test,

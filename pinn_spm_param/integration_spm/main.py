@@ -25,11 +25,11 @@ input_params = False
 if not args.params_list is None:
     input_params = True
 if input_params:
-    deg_i0_a = np.float64(args.params_list[0])
-    deg_ds_c = np.float64(args.params_list[1])
+    deg_i0_a = np.float32(args.params_list[0])
+    deg_ds_c = np.float32(args.params_list[1])
 else:
-    deg_i0_a = np.float64(0.5)
-    deg_ds_c = np.float64(1.0)
+    deg_i0_a = np.float32(0.5)
+    deg_ds_c = np.float32(1.0)
 
 # discretization
 from spm_int import *

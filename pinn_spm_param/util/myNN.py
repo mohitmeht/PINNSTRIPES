@@ -26,7 +26,7 @@ from keras.layers import *
 from keras.models import Model
 from prettyPlot.progressBar import print_progress_bar
 
-set_floatx("float64")
+set_floatx("float32")
 
 # Read command line arguments
 args = argument.initArg()
@@ -100,7 +100,7 @@ def grad_path(x, n_blocks, n_units, initializer, activation):
 
 
 def max_tensor_list(tensor_list):
-    maxval = np.float64(0.0)
+    maxval = np.float32(0.0)
     for i in range(len(tensor_list)):
         if tensor_list[i] is not None:
             maxval = tf.math.maximum(
@@ -110,7 +110,7 @@ def max_tensor_list(tensor_list):
 
 
 def mean_tensor_list(tensor_list, nTrainablePar):
-    meanval = np.float64(0.0)
+    meanval = np.float32(0.0)
     ntot = 1e-16
     for i in range(len(tensor_list)):
         if tensor_list[i] is not None:
@@ -156,18 +156,18 @@ class myNN(Model):
         n_batch=0,
         n_batch_lbfgs=0,
         nEpochs_start_lbfgs=10,
-        hard_IC_timescale=np.float64(0.81),
-        exponentialLimiter=np.float64(10.0),
+        hard_IC_timescale=np.float32(0.81),
+        exponentialLimiter=np.float32(10.0),
         collocationMode="fixed",
         gradualTime_sgd=False,
         gradualTime_lbfgs=False,
-        firstTime=np.float64(0.1),
+        firstTime=np.float32(0.1),
         n_gradual_steps_lbfgs=None,
         gradualTimeMode_lbfgs=None,
-        tmin_int_bound=np.float64(0.1),
+        tmin_int_bound=np.float32(0.1),
         nEpochs=60,
         nEpochs_lbfgs=60,
-        initialLossThreshold=np.float64(100),
+        initialLossThreshold=np.float32(100),
         dynamicAttentionWeights=False,
         annealingWeights=False,
         useLossThreshold=True,
@@ -283,9 +283,9 @@ class myNN(Model):
             self.activation = "gelu"
         else:
             sys.exit("ABORTING: Activation %s unrecognized" % activation)
-        self.tmin = np.float64(self.params["tmin"])
-        self.tmax = np.float64(self.params["tmax"])
-        self.rmin = np.float64(self.params["rmin"])
+        self.tmin = np.float32(self.params["tmin"])
+        self.tmax = np.float32(self.params["tmax"])
+        self.rmin = np.float32(self.params["rmin"])
         self.rmax_a = self.params["Rs_a"]
         self.rmax_c = self.params["Rs_c"]
         self.ind_t = np.int32(0)
@@ -302,18 +302,18 @@ class myNN(Model):
         self.ind_cs_a_data = np.int32(2)
         self.ind_cs_c_data = np.int32(3)
 
-        self.alpha = [np.float64(alphaEntry) for alphaEntry in alpha]
-        self.alpha_unweighted = [np.float64(1.0) for alphaEntry in alpha]
+        self.alpha = [np.float32(alphaEntry) for alphaEntry in alpha]
+        self.alpha_unweighted = [np.float32(1.0) for alphaEntry in alpha]
         if self.annealingWeights:
             self.alpha = [
                 (
-                    np.float64(1.0)
-                    if np.float64(alphaEntry) > np.float64(1e-12)
-                    else np.float64(0.0)
+                    np.float32(1.0)
+                    if np.float32(alphaEntry) > np.float32(1e-12)
+                    else np.float32(0.0)
                 )
                 for alphaEntry in alpha
             ]
-        self.phis_a0 = np.float64(0.0)
+        self.phis_a0 = np.float32(0.0)
         self.ce_0 = self.params["ce0"]
         self.cs_a0 = self.params["cs_a0"]
         self.cs_c0 = self.params["cs_c0"]
@@ -335,8 +335,8 @@ class myNN(Model):
         self.exponentialLimiter = exponentialLimiter
         self.collocationMode = collocationMode
 
-        self.firstTime = np.float64(firstTime)
-        self.tmin_int_bound = np.float64(tmin_int_bound)
+        self.firstTime = np.float32(firstTime)
+        self.tmin_int_bound = np.float32(tmin_int_bound)
         self.dim_inpt = np.int32(2)
 
         self.nEpochs = nEpochs
@@ -356,12 +356,12 @@ class myNN(Model):
             self.dynamicAttentionWeights = False
 
         if self.gradualTime_sgd:
-            self.firstTime = np.float64(firstTime)
+            self.firstTime = np.float32(firstTime)
             self.timeIncreaseExponent = -np.log(
-                (self.firstTime - np.float64(self.params["tmin"]))
+                (self.firstTime - np.float32(self.params["tmin"]))
                 / (
-                    np.float64(self.params["tmax"])
-                    - np.float64(self.params["tmin"])
+                    np.float32(self.params["tmax"])
+                    - np.float32(self.params["tmin"])
                 )
             )
 
@@ -446,48 +446,48 @@ class myNN(Model):
         # Interior loss collocation points
         self.r_a_int = tf.random.uniform(
             (n_int, 1),
-            minval=self.rmin + np.float64(1e-12),
+            minval=self.rmin + np.float32(1e-12),
             maxval=self.rmax_a,
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         self.r_c_int = tf.random.uniform(
             (n_int, 1),
-            minval=self.rmin + np.float64(1e-12),
+            minval=self.rmin + np.float32(1e-12),
             maxval=self.rmax_c,
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         self.r_maxa_int = self.rmax_a * tf.ones(
-            (n_int, 1), dtype=tf.dtypes.float64
+            (n_int, 1), dtype=tf.dtypes.float32
         )
         self.r_maxc_int = self.rmax_c * tf.ones(
-            (n_int, 1), dtype=tf.dtypes.float64
+            (n_int, 1), dtype=tf.dtypes.float32
         )
         if self.gradualTime_sgd:
             self.t_int = tf.random.uniform(
                 (n_int, 1),
                 minval=tmin_int,
                 maxval=self.firstTime,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
         else:
             self.t_int = tf.random.uniform(
                 (n_int, 1),
                 minval=tmin_int,
                 maxval=self.tmax,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
         # Params
         self.deg_i0_a_int = tf.random.uniform(
             (n_int, 1),
             minval=self.params["deg_i0_a_min_eff"],
             maxval=self.params["deg_i0_a_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         self.deg_ds_c_int = tf.random.uniform(
             (n_int, 1),
             minval=self.params["deg_ds_c_min_eff"],
             maxval=self.params["deg_ds_c_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
 
         self.ind_int_col_t = np.int32(0)
@@ -510,38 +510,38 @@ class myNN(Model):
         ]
 
         # Boundary loss collocation points
-        self.r_min_bound = tf.zeros((n_bound, 1), dtype=tf.dtypes.float64)
+        self.r_min_bound = tf.zeros((n_bound, 1), dtype=tf.dtypes.float32)
         self.r_maxa_bound = self.rmax_a * tf.ones(
-            (n_bound, 1), dtype=tf.dtypes.float64
+            (n_bound, 1), dtype=tf.dtypes.float32
         )
         self.r_maxc_bound = self.rmax_c * tf.ones(
-            (n_bound, 1), dtype=tf.dtypes.float64
+            (n_bound, 1), dtype=tf.dtypes.float32
         )
         self.deg_i0_a_bound = tf.random.uniform(
             (n_bound, 1),
             minval=self.params["deg_i0_a_min_eff"],
             maxval=self.params["deg_i0_a_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         self.deg_ds_c_bound = tf.random.uniform(
             (n_bound, 1),
             minval=self.params["deg_ds_c_min_eff"],
             maxval=self.params["deg_ds_c_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         if self.gradualTime_sgd:
             self.t_bound = tf.random.uniform(
                 (n_bound, 1),
                 minval=tmin_bound,
                 maxval=self.firstTime,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
         else:
             self.t_bound = tf.random.uniform(
                 (n_bound, 1),
                 minval=tmin_bound,
                 maxval=self.tmax,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
 
         self.ind_bound_col_t = np.int32(0)
@@ -567,26 +567,26 @@ class myNN(Model):
                 (n_reg, 1),
                 minval=tmin_reg,
                 maxval=self.firstTime,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
         else:
             self.t_reg = tf.random.uniform(
                 (n_reg, 1),
                 minval=tmin_reg,
                 maxval=self.tmax,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
         self.deg_i0_a_reg = tf.random.uniform(
             (n_reg, 1),
             minval=self.params["deg_i0_a_min_eff"],
             maxval=self.params["deg_i0_a_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         self.deg_ds_c_reg = tf.random.uniform(
             (n_reg, 1),
             minval=self.params["deg_ds_c_min_eff"],
             maxval=self.params["deg_ds_c_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
 
         self.ind_reg_col_t = np.int32(0)
@@ -644,20 +644,20 @@ class myNN(Model):
             self.new_nData = self.n_batch
             self.xDataList_full = [
                 (
-                    np.zeros((self.n_batch, self.dim_inpt)).astype("float64")
+                    np.zeros((self.n_batch, self.dim_inpt)).astype("float32")
                     if i in [self.ind_cs_a_data, self.ind_cs_c_data]
                     else np.zeros((self.n_batch, self.dim_inpt - 1)).astype(
-                        "float64"
+                        "float32"
                     )
                 )
                 for i in range(self.n_data_terms)
             ]
             self.x_params_dataList_full = [
-                np.zeros((self.n_batch, self.dim_params)).astype("float64")
+                np.zeros((self.n_batch, self.dim_params)).astype("float32")
                 for _ in range(self.n_data_terms)
             ]
             self.yDataList_full = [
-                np.zeros((self.n_batch, 1)).astype("float64")
+                np.zeros((self.n_batch, 1)).astype("float32")
                 for _ in range(self.n_data_terms)
             ]
 
@@ -681,7 +681,7 @@ class myNN(Model):
         if self.lbfgs:
             self.nEpochs_lbfgs = nEpochs_lbfgs
             if self.gradualTime_lbfgs:
-                self.firstTime = np.float64(firstTime)
+                self.firstTime = np.float32(firstTime)
                 self.n_gradual_steps_lbfgs = int(n_gradual_steps_lbfgs)
                 self.nEp_per_gradual_step = self.nEpochs_lbfgs // (
                     2 * self.n_gradual_steps_lbfgs
@@ -693,9 +693,9 @@ class myNN(Model):
                         stepTime = (self.params["tmax"] - self.firstTime) / (
                             self.n_gradual_steps_lbfgs
                         )
-                        np.float64(istep_lbfgs) * +self.firstTime
+                        np.float32(istep_lbfgs) * +self.firstTime
                         new_time_lbfgs = (
-                            np.float64(istep_lbfgs) * stepTime + self.firstTime
+                            np.float32(istep_lbfgs) * stepTime + self.firstTime
                         )
                         new_time_lbfgs = min(
                             new_time_lbfgs, self.params["tmax"]
@@ -703,12 +703,12 @@ class myNN(Model):
                         self.gradualTimeSchedule_lbfgs.append(new_time_lbfgs)
 
                 elif self.gradualTimeMode_lbfgs.lower() == "exponential":
-                    constantExp_lbfgs = -np.float64(1.0)
+                    constantExp_lbfgs = -np.float32(1.0)
                     timeExponent_lbfgs = np.log(
                         self.params["tmax"]
                         - self.firstTime
                         - constantExp_lbfgs
-                    ) / np.float64(self.n_gradual_steps_lbfgs)
+                    ) / np.float32(self.n_gradual_steps_lbfgs)
                     for istep_lbfgs in range(self.n_gradual_steps_lbfgs):
                         new_time_lbfgs = (
                             constantExp_lbfgs
@@ -795,26 +795,26 @@ class myNN(Model):
         self.reg_loss_weights = []
 
         if self.annealingWeights:
-            self.alpha_anneal = np.float64(0.9 / self.n_batch)
+            self.alpha_anneal = np.float32(0.9 / self.n_batch)
             if self.activeInt:
                 n_terms = len(self.interiorTerms_rescale)
                 for _ in range(n_terms):
                     self.int_loss_terms.append(
                         tf.Variable(
-                            np.float64(0.0), shape=tf.TensorShape(None)
+                            np.float32(0.0), shape=tf.TensorShape(None)
                         )
                     )
                     self.int_loss_weights.append(
                         tf.Variable(
-                            np.float64(1.0), shape=tf.TensorShape(None)
+                            np.float32(1.0), shape=tf.TensorShape(None)
                         )
                     )
             else:
                 self.int_loss_terms = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
                 self.int_loss_weights = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
 
             if self.activeBound:
@@ -822,20 +822,20 @@ class myNN(Model):
                 for _ in range(n_terms):
                     self.bound_loss_terms.append(
                         tf.Variable(
-                            np.float64(0.0), shape=tf.TensorShape(None)
+                            np.float32(0.0), shape=tf.TensorShape(None)
                         )
                     )
                     self.bound_loss_weights.append(
                         tf.Variable(
-                            np.float64(1.0), shape=tf.TensorShape(None)
+                            np.float32(1.0), shape=tf.TensorShape(None)
                         )
                     )
             else:
                 self.bound_loss_terms = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
                 self.bound_loss_weights = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
 
             if self.activeData:
@@ -843,20 +843,20 @@ class myNN(Model):
                 for _ in range(n_terms):
                     self.data_loss_terms.append(
                         tf.Variable(
-                            np.float64(0.0), shape=tf.TensorShape(None)
+                            np.float32(0.0), shape=tf.TensorShape(None)
                         )
                     )
                     self.data_loss_weights.append(
                         tf.Variable(
-                            np.float64(1.0), shape=tf.TensorShape(None)
+                            np.float32(1.0), shape=tf.TensorShape(None)
                         )
                     )
             else:
                 self.data_loss_terms = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
                 self.data_loss_weights = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
 
             if self.activeReg:
@@ -864,20 +864,20 @@ class myNN(Model):
                 for _ in range(n_terms):
                     self.reg_loss_terms.append(
                         tf.Variable(
-                            np.float64(0.0), shape=tf.TensorShape(None)
+                            np.float32(0.0), shape=tf.TensorShape(None)
                         )
                     )
                     self.reg_loss_weights.append(
                         tf.Variable(
-                            np.float64(1.0), shape=tf.TensorShape(None)
+                            np.float32(1.0), shape=tf.TensorShape(None)
                         )
                     )
             else:
                 self.reg_loss_terms = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
                 self.reg_loss_weights = [
-                    tf.Variable(np.float64(0.0), shape=tf.TensorShape(None))
+                    tf.Variable(np.float32(0.0), shape=tf.TensorShape(None))
                 ]
 
         # Dynamic attention
@@ -897,7 +897,7 @@ class myNN(Model):
                     tmp = tf.Variable(
                         tf.reshape(
                             tf.repeat(
-                                np.float64(1.0), self.batch_size_int * n_terms
+                                np.float32(1.0), self.batch_size_int * n_terms
                             ),
                             (n_terms, self.batch_size_int, -1),
                         ),
@@ -906,14 +906,14 @@ class myNN(Model):
                     self.int_col_weights.append(tmp)
             else:
                 for _ in range(self.n_batch):
-                    self.int_col_weights.append([np.float64(0.0)])
+                    self.int_col_weights.append([np.float32(0.0)])
             if self.activeBound:
                 n_terms = len(self.boundaryTerms_rescale)
                 for _ in range(self.n_batch):
                     tmp = tf.Variable(
                         tf.reshape(
                             tf.repeat(
-                                np.float64(1.0),
+                                np.float32(1.0),
                                 self.batch_size_bound * n_terms,
                             ),
                             (n_terms, self.batch_size_bound, -1),
@@ -923,14 +923,14 @@ class myNN(Model):
                     self.bound_col_weights.append(tmp)
             else:
                 for _ in range(self.n_batch):
-                    self.bound_col_weights.append([np.float64(0.0)])
+                    self.bound_col_weights.append([np.float32(0.0)])
             if self.activeData:
                 n_terms = len(self.dataTerms_rescale)
                 for _ in range(self.n_batch):
                     tmp = tf.Variable(
                         tf.reshape(
                             tf.repeat(
-                                np.float64(1.0), self.batch_size_data * n_terms
+                                np.float32(1.0), self.batch_size_data * n_terms
                             ),
                             (n_terms, self.batch_size_data, -1),
                         ),
@@ -939,14 +939,14 @@ class myNN(Model):
                     self.data_col_weights.append(tmp)
             else:
                 for _ in range(self.n_batch):
-                    self.data_col_weights.append([np.float64(0.0)])
+                    self.data_col_weights.append([np.float32(0.0)])
             if self.activeReg:
                 n_terms = len(self.regTerms_rescale)
                 for _ in range(self.n_batch):
                     tmp = tf.Variable(
                         tf.reshape(
                             tf.repeat(
-                                np.float64(1.0), self.batch_size_reg * n_terms
+                                np.float32(1.0), self.batch_size_reg * n_terms
                             ),
                             (n_terms, self.batch_size_reg, -1),
                         ),
@@ -955,7 +955,7 @@ class myNN(Model):
                     self.reg_col_weights.append(tmp)
             else:
                 for _ in range(self.n_batch):
-                    self.reg_col_weights.append([np.float64(0.0)])
+                    self.reg_col_weights.append([np.float32(0.0)])
 
     def vprint(self, *kwargs):
         if self.verbose:
@@ -1410,14 +1410,14 @@ class myNN(Model):
             print("WARNING: Will not load weights")
             return
         if self.activeInt:
-            self.t_int = tf.convert_to_tensor(int_tcol, dtype=tf.float64)
-            self.r_a_int = tf.convert_to_tensor(int_rcol_a, dtype=tf.float64)
-            self.r_c_int = tf.convert_to_tensor(int_rcol_c, dtype=tf.float64)
+            self.t_int = tf.convert_to_tensor(int_tcol, dtype=tf.float32)
+            self.r_a_int = tf.convert_to_tensor(int_rcol_a, dtype=tf.float32)
+            self.r_c_int = tf.convert_to_tensor(int_rcol_c, dtype=tf.float32)
             self.r_maxa_int = tf.convert_to_tensor(
-                int_rcol_maxa, dtype=tf.float64
+                int_rcol_maxa, dtype=tf.float32
             )
             self.r_maxc_int = tf.convert_to_tensor(
-                int_rcol_maxc, dtype=tf.float64
+                int_rcol_maxc, dtype=tf.float32
             )
             self.int_col_pts = [
                 self.t_int,
@@ -1427,21 +1427,21 @@ class myNN(Model):
                 self.r_maxc_int,
             ]
         if self.activeReg:
-            self.t_reg = tf.convert_to_tensor(reg_tcol, dtype=tf.float64)
+            self.t_reg = tf.convert_to_tensor(reg_tcol, dtype=tf.float32)
             self.reg_col_pts = [
                 self.t_reg,
             ]
 
         if self.activeBound:
-            self.t_bound = tf.convert_to_tensor(bound_tcol, dtype=tf.float64)
+            self.t_bound = tf.convert_to_tensor(bound_tcol, dtype=tf.float32)
             self.r_min_bound = tf.convert_to_tensor(
-                bound_rcol_min, dtype=tf.float64
+                bound_rcol_min, dtype=tf.float32
             )
             self.r_maxa_bound = tf.convert_to_tensor(
-                bound_rcol_maxa, dtype=tf.float64
+                bound_rcol_maxa, dtype=tf.float32
             )
             self.r_maxc_bound = tf.convert_to_tensor(
-                bound_rcol_maxc, dtype=tf.float64
+                bound_rcol_maxc, dtype=tf.float32
             )
             self.bound_col_pts = [
                 self.t_bound,
@@ -1613,7 +1613,7 @@ class myNN(Model):
                     ],
                     axis=0,
                 ),
-                dtype=tf.float64,
+                dtype=tf.float32,
             )
             boundaryTerms_rescaled = tf.cast(
                 tf.stack(
@@ -1625,7 +1625,7 @@ class myNN(Model):
                     ],
                     axis=0,
                 ),
-                dtype=tf.float64,
+                dtype=tf.float32,
             )
             dataTerms_rescaled = tf.cast(
                 tf.stack(
@@ -1637,7 +1637,7 @@ class myNN(Model):
                     ],
                     axis=0,
                 ),
-                dtype=tf.float64,
+                dtype=tf.float32,
             )
 
             regTerms_rescaled = tf.cast(
@@ -1650,7 +1650,7 @@ class myNN(Model):
                     ],
                     axis=0,
                 ),
-                dtype=tf.float64,
+                dtype=tf.float32,
             )
             (
                 loss_value,
@@ -2337,16 +2337,16 @@ class myNN(Model):
                 if self.nEpochs > 3:
                     new_tmax = (
                         (
-                            np.float64(self.params["tmax"])
-                            - np.float64(self.params["tmin"])
+                            np.float32(self.params["tmax"])
+                            - np.float32(self.params["tmin"])
                         )
-                        * np.float64(
+                        * np.float32(
                             np.exp(
                                 self.timeIncreaseExponent
                                 * ((epoch) / (self.nEpochs // 2 - 1) - 1)
                             )
                         )
-                    ) + np.float64(self.params["tmin"])
+                    ) + np.float32(self.params["tmin"])
                     new_tmax = min(new_tmax, self.params["tmax"])
                 else:
                     new_tmax = self.params["tmax"]
@@ -2617,22 +2617,22 @@ class myNN(Model):
                                 if self.activeInt and abs(
                                     allmax[max_grad_id]
                                     - max_grad_int[max_grad_int_id]
-                                ) < np.float64(1e-12):
+                                ) < np.float32(1e-12):
                                     int_ref = True
                                 if self.activeBound and abs(
                                     allmax[max_grad_id]
                                     - max_grad_bound[max_grad_bound_id]
-                                ) < np.float64(1e-12):
+                                ) < np.float32(1e-12):
                                     bound_ref = True
                                 if self.activeData and abs(
                                     allmax[max_grad_id]
                                     - max_grad_data[max_grad_data_id]
-                                ) < np.float64(1e-12):
+                                ) < np.float32(1e-12):
                                     data_ref = True
                                 if self.activeReg and abs(
                                     allmax[max_grad_id]
                                     - max_grad_reg[max_grad_reg_id]
-                                ) < np.float64(1e-12):
+                                ) < np.float32(1e-12):
                                     reg_ref = True
                                 self.annealingMaxSet = True
                             maxGradRef = allmax[max_grad_id]
@@ -2641,50 +2641,50 @@ class myNN(Model):
                                     continue
                                 self.int_loss_weights[i] = np.clip(
                                     self.int_loss_weights[i]
-                                    * (np.float64(1.0) - self.alpha_anneal)
+                                    * (np.float32(1.0) - self.alpha_anneal)
                                     + self.alpha_anneal
                                     * maxGradRef
-                                    / (mean_grads_int[i] + np.float64(1e-16)),
-                                    a_min=np.float64(1e-1),
-                                    a_max=np.float64(1e6),
+                                    / (mean_grads_int[i] + np.float32(1e-16)),
+                                    a_min=np.float32(1e-1),
+                                    a_max=np.float32(1e6),
                                 )
                             for i in range(len(self.boundaryTerms_rescale)):
                                 if bound_ref and i == max_grad_bound_id:
                                     continue
                                 self.bound_loss_weights[i] = np.clip(
                                     self.bound_loss_weights[i]
-                                    * (np.float64(1.0) - self.alpha_anneal)
+                                    * (np.float32(1.0) - self.alpha_anneal)
                                     + self.alpha_anneal
                                     * maxGradRef
                                     / (
-                                        mean_grads_bound[i] + np.float64(1e-16)
+                                        mean_grads_bound[i] + np.float32(1e-16)
                                     ),
-                                    a_min=np.float64(1e-1),
-                                    a_max=np.float64(1e6),
+                                    a_min=np.float32(1e-1),
+                                    a_max=np.float32(1e6),
                                 )
                             for i in range(len(self.dataTerms_rescale)):
                                 if data_ref and i == max_grad_data_id:
                                     continue
                                 self.data_loss_weights[i] = np.clip(
                                     self.data_loss_weights[i]
-                                    * (np.float64(1.0) - self.alpha_anneal)
+                                    * (np.float32(1.0) - self.alpha_anneal)
                                     + self.alpha_anneal
                                     * maxGradRef
-                                    / (mean_grads_data[i] + np.float64(1e-16)),
-                                    a_min=np.float64(1e-1),
-                                    a_max=np.float64(1e6),
+                                    / (mean_grads_data[i] + np.float32(1e-16)),
+                                    a_min=np.float32(1e-1),
+                                    a_max=np.float32(1e6),
                                 )
                             for i in range(len(self.regTerms_rescale)):
                                 if reg_ref and i == max_grad_reg_id:
                                     continue
                                 self.reg_loss_weights[i] = np.clip(
                                     self.reg_loss_weights[i]
-                                    * (np.float64(1.0) - self.alpha_anneal)
+                                    * (np.float32(1.0) - self.alpha_anneal)
                                     + self.alpha_anneal
                                     * maxGradRef
-                                    / (mean_grads_reg[i] + np.float64(1e-16)),
-                                    a_min=np.float64(1e-1),
-                                    a_max=np.float64(1e6),
+                                    / (mean_grads_reg[i] + np.float32(1e-16)),
+                                    a_min=np.float32(1e-1),
+                                    a_max=np.float32(1e6),
                                 )
 
                     else:
@@ -2977,7 +2977,7 @@ class myNN(Model):
             print("\nStarting L-BFGS training")
             if self.dynamicAttentionWeights:
                 self.flatIntColOnes = [
-                    tf.ones((self.n_int, 1), dtype=tf.dtypes.float64)
+                    tf.ones((self.n_int, 1), dtype=tf.dtypes.float32)
                 ] * len(self.interiorTerms_rescale)
                 if self.activeInt:
                     self.flatIntColWeights = [
@@ -2996,10 +2996,10 @@ class myNN(Model):
                     ]
                 else:
                     self.flatIntColWeights = [
-                        tf.zeros((self.n_batch), dtype=tf.dtypes.float64)
+                        tf.zeros((self.n_batch), dtype=tf.dtypes.float32)
                     ]
                 self.flatBoundColOnes = [
-                    tf.ones((self.n_bound, 1), dtype=tf.dtypes.float64)
+                    tf.ones((self.n_bound, 1), dtype=tf.dtypes.float32)
                 ] * len(self.boundaryTerms_rescale)
                 if self.activeBound:
                     self.flatBoundColWeights = [
@@ -3018,10 +3018,10 @@ class myNN(Model):
                     ]
                 else:
                     self.flatBoundColWeights = [
-                        tf.zeros((self.n_batch), dtype=tf.dtypes.float64)
+                        tf.zeros((self.n_batch), dtype=tf.dtypes.float32)
                     ]
                 self.flatDataColOnes = [
-                    tf.ones((self.n_data, 1), dtype=tf.dtypes.float64)
+                    tf.ones((self.n_data, 1), dtype=tf.dtypes.float32)
                 ] * len(self.dataTerms_rescale)
                 if self.activeData:
                     self.flatDataColWeights = [
@@ -3040,10 +3040,10 @@ class myNN(Model):
                     ]
                 else:
                     self.flatDataColWeights = [
-                        tf.zeros((self.n_batch), dtype=tf.dtypes.float64)
+                        tf.zeros((self.n_batch), dtype=tf.dtypes.float32)
                     ]
                 self.flatRegColOnes = [
-                    tf.ones((self.n_reg, 1), dtype=tf.dtypes.float64)
+                    tf.ones((self.n_reg, 1), dtype=tf.dtypes.float32)
                 ] * len(self.regTerms_rescale)
                 if self.activeReg:
                     self.flatRegColWeights = [
@@ -3062,7 +3062,7 @@ class myNN(Model):
                     ]
                 else:
                     self.flatRegColWeights = [
-                        tf.zeros((self.n_batch), dtype=tf.dtypes.float64)
+                        tf.zeros((self.n_batch), dtype=tf.dtypes.float32)
                     ]
 
             if self.gradualTime_sgd or self.gradualTime_lbfgs:
@@ -3196,21 +3196,20 @@ class myNN(Model):
                 pass
 
         # Save model configuration
+        class NpEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, np.integer):
+                    return int(obj)
+                if isinstance(obj, np.floating):
+                    return float(obj)
+                if isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                return super(NpEncoder, self).default(obj)
+
         with open(
             os.path.join(self.modelFolder, "config.json"), "w+"
         ) as outfile:
-            # float 32 is not supported by Json
-            for key in self.config:
-                ent_type = str(type(self.config[key]))
-                if "numpy.float" in ent_type and "32" in ent_type:
-                    self.config[key] = float(self.config[key])
-                elif key == "params_min" or key == "params_max":
-                    for ientry, entry in enumerate(self.config[key]):
-                        ent_type = str(type(self.config[key][ientry]))
-                        if "numpy.float" in ent_type and "32" in ent_type:
-                            self.config[key][ientry] = float(entry)
-
-            json.dump(self.config, outfile, indent=4, sort_keys=True)
+            json.dump(self.config, outfile, indent=4, sort_keys=True, cls=NpEncoder)
 
         # Make log headers
         f = open(os.path.join(self.logLossFolder, "log.csv"), "a+")
@@ -3324,7 +3323,7 @@ class myNN(Model):
             try:
                 f = open(filename, "r")
                 lines = f.readlines()
-                param = np.float64(lines[0])
+                param = np.float32(lines[0])
                 if mode == "lr_m":
                     self.lr_m_epoch_start = param
                 if mode == "lr_w":

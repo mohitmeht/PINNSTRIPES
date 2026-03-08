@@ -67,15 +67,15 @@ for idata, (data, deg_i0_a, deg_ds_c) in enumerate(
         n_t = data["t"].shape[0]
         freqT = n_t // target_nt
 
-    t = data["t"][::freqT].astype("float64")
-    r_a = data["r_a"].astype("float64")
-    r_c = data["r_c"].astype("float64")
+    t = data["t"][::freqT].astype("float32")
+    r_a = data["r_a"].astype("float32")
+    r_c = data["r_c"].astype("float32")
 
     # state
-    phie = data["phie"][::freqT].astype("float64")
-    phis_c = data["phis_c"][::freqT].astype("float64")
-    cs_a = data["cs_a"][::freqT, :].astype("float64")
-    cs_c = data["cs_c"][::freqT, :].astype("float64")
+    phie = data["phie"][::freqT].astype("float32")
+    phis_c = data["phis_c"][::freqT].astype("float32")
+    cs_a = data["cs_a"][::freqT, :].astype("float32")
+    cs_c = data["cs_c"][::freqT, :].astype("float32")
 
     n_r = len(r_a)
     n_t = len(t)
@@ -94,11 +94,11 @@ for idata, (data, deg_i0_a, deg_ds_c) in enumerate(
     # Phie
     t_phie = t_1d
     # Assemble
-    x_phie = t_phie.astype("float64")
+    x_phie = t_phie.astype("float32")
     x_params_phie = np.zeros((x_phie.shape[0], 2))
     x_params_phie[:, 0] = deg_i0_a
     x_params_phie[:, 1] = deg_ds_c
-    y_phie = np.reshape(phie, (len(phie), 1)).astype("float64")
+    y_phie = np.reshape(phie, (len(phie), 1)).astype("float32")
 
     if idata == 0:
         x_phie_tot = x_phie
@@ -137,11 +137,11 @@ for idata, (data, deg_i0_a, deg_ds_c) in enumerate(
     # Phis_c
     t_phis_c = t_1d
     # Assemble
-    x_phis_c = t_phis_c.astype("float64")
+    x_phis_c = t_phis_c.astype("float32")
     x_params_phis_c = np.zeros((x_phis_c.shape[0], 2))
     x_params_phis_c[:, 0] = deg_i0_a
     x_params_phis_c[:, 1] = deg_ds_c
-    y_phis_c = np.reshape(phis_c, (len(phis_c), 1)).astype("float64")
+    y_phis_c = np.reshape(phis_c, (len(phis_c), 1)).astype("float32")
 
     if idata == 0:
         x_phis_c_tot = x_phis_c
@@ -179,11 +179,11 @@ for idata, (data, deg_i0_a, deg_ds_c) in enumerate(
 
     # cs anode
     cs_a = np.reshape(cs_a, (n_t * n_r, 1))
-    x_cs_a = np.hstack((t_2d_flatten, r_a_2d_flatten)).astype("float64")
+    x_cs_a = np.hstack((t_2d_flatten, r_a_2d_flatten)).astype("float32")
     x_params_cs_a = np.zeros((x_cs_a.shape[0], 2))
     x_params_cs_a[:, 0] = deg_i0_a
     x_params_cs_a[:, 1] = deg_ds_c
-    y_cs_a = np.reshape(cs_a, (len(cs_a), 1)).astype("float64")
+    y_cs_a = np.reshape(cs_a, (len(cs_a), 1)).astype("float32")
 
     if idata == 0:
         x_cs_a_tot = x_cs_a
@@ -222,11 +222,11 @@ for idata, (data, deg_i0_a, deg_ds_c) in enumerate(
     # cs cathode
     cs_c = np.reshape(cs_c, (n_t * n_r, 1))
     # Assemble
-    x_cs_c = np.hstack((t_2d_flatten, r_c_2d_flatten)).astype("float64")
+    x_cs_c = np.hstack((t_2d_flatten, r_c_2d_flatten)).astype("float32")
     x_params_cs_c = np.zeros((x_cs_c.shape[0], 2))
     x_params_cs_c[:, 0] = deg_i0_a
     x_params_cs_c[:, 1] = deg_ds_c
-    y_cs_c = np.reshape(cs_c, (len(cs_c), 1)).astype("float64")
+    y_cs_c = np.reshape(cs_c, (len(cs_c), 1)).astype("float32")
 
     if idata == 0:
         x_cs_c_tot = x_cs_c

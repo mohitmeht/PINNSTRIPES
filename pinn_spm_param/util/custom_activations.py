@@ -6,7 +6,7 @@ from keras.backend import set_floatx
 from keras.layers import Activation, Layer
 from keras.utils import get_custom_objects
 
-set_floatx("float64")
+set_floatx("float32")
 
 # Read command line arguments
 args = argument.initArg()
@@ -32,13 +32,13 @@ class Bswish(Layer):
         self.num_outputs = num_outputs
         beta_init = tf.random_normal_initializer()
         self.beta = tf.Variable(
-            initial_value=beta_init(shape=(1, num_outputs), dtype="float64"),
+            initial_value=beta_init(shape=(1, num_outputs), dtype="float32"),
             trainable=True,
             name="beta",
         )
         b_init = tf.random_normal_initializer()
         self.b = tf.Variable(
-            initial_value=b_init(shape=(1, num_outputs), dtype="float64"),
+            initial_value=b_init(shape=(1, num_outputs), dtype="float32"),
             trainable=True,
             name="bias",
         )

@@ -18,7 +18,7 @@ from keras.backend import set_floatx
 from myNN import *
 from plotsUtil_batt import *
 
-set_floatx("float64")
+set_floatx("float32")
 
 print("\n\nINFO: PLOTTING RESULTS OF THE PINN TRAINING\n\n")
 

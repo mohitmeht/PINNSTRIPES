@@ -4,7 +4,7 @@ import tensorflow as tf
 from conditionalDecorator import conditional_decorator
 from keras.backend import set_floatx
 
-set_floatx("float64")
+set_floatx("float32")
 
 # Read command line arguments
 args = argument.initArg()
@@ -27,24 +27,24 @@ def loss_fn_lbfgs_SA(
     alpha,
 ):
     # Interior loss
-    int_loss = np.float64(0.0)
+    int_loss = np.float32(0.0)
     for i_term, term in enumerate(interiorTerms):
         int_loss += tf.reduce_mean(tf.square(int_col_weights[i_term] * term))
 
     # Boundary loss
-    bound_loss = np.float64(0.0)
+    bound_loss = np.float32(0.0)
     for i_term, term in enumerate(boundaryTerms):
         bound_loss += tf.reduce_mean(
             tf.square(bound_col_weights[i_term] * term)
         )
 
     # Data loss
-    data_loss = np.float64(0.0)
+    data_loss = np.float32(0.0)
     for i_term, term in enumerate(dataTerms):
         data_loss += tf.reduce_mean(tf.square(data_col_weights[i_term] * term))
 
     # Reg loss
-    reg_loss = np.float64(0.0)
+    reg_loss = np.float32(0.0)
     for i_term, term in enumerate(regularizationTerms):
         reg_loss += tf.reduce_mean(tf.square(reg_col_weights[i_term] * term))
 
@@ -67,22 +67,22 @@ def loss_fn_lbfgs(
     interiorTerms, boundaryTerms, dataTerms, regularizationTerms, alpha
 ):
     # Interior loss
-    int_loss = np.float64(0.0)
+    int_loss = np.float32(0.0)
     for i_term, term in enumerate(interiorTerms):
         int_loss += tf.reduce_mean(tf.square(term))
 
     # Boundary loss
-    bound_loss = np.float64(0.0)
+    bound_loss = np.float32(0.0)
     for i_term, term in enumerate(boundaryTerms):
         bound_loss += tf.reduce_mean(tf.square(term))
 
     # Data loss
-    data_loss = np.float64(0.0)
+    data_loss = np.float32(0.0)
     for i_term, term in enumerate(dataTerms):
         data_loss += tf.reduce_mean(tf.square(term))
 
     # Reg loss
-    reg_loss = np.float64(0.0)
+    reg_loss = np.float32(0.0)
     for i_term, term in enumerate(regularizationTerms):
         reg_loss += tf.reduce_mean(tf.square(term))
 
@@ -114,26 +114,26 @@ def loss_fn_lbfgs_annealing(
     alpha,
 ):
     # Interior loss
-    int_loss = np.float64(0.0)
+    int_loss = np.float32(0.0)
     for i_term, term in enumerate(interiorTerms):
         int_loss += int_loss_weights[i_term] * tf.reduce_mean(tf.square(term))
 
     # Boundary loss
-    bound_loss = np.float64(0.0)
+    bound_loss = np.float32(0.0)
     for i_term, term in enumerate(boundaryTerms):
         bound_loss += bound_loss_weights[i_term] * tf.reduce_mean(
             tf.square(term)
         )
 
     # Data loss
-    data_loss = np.float64(0.0)
+    data_loss = np.float32(0.0)
     for i_term, term in enumerate(dataTerms):
         data_loss += data_loss_weights[i_term] * tf.reduce_mean(
             tf.square(term)
         )
 
     # Reg loss
-    reg_loss = np.float64(0.0)
+    reg_loss = np.float32(0.0)
     for i_term, term in enumerate(regularizationTerms):
         reg_loss += reg_loss_weights[i_term] * tf.reduce_mean(tf.square(term))
 
@@ -166,50 +166,50 @@ def loss_fn_dynamicAttention_tensor(
     alpha,
 ):
     # Interior loss
-    int_loss = np.float64(0.0)
-    int_loss_unweighted = np.float64(0.0)
+    int_loss = np.float32(0.0)
+    int_loss_unweighted = np.float32(0.0)
     int_loss_unweighted = tf.reduce_mean(tf.square(interiorTerms)) * tf.cast(
-        tf.shape(interiorTerms)[0], dtype=tf.float64
+        tf.shape(interiorTerms)[0], dtype=tf.float32
     )
     int_loss = tf.reduce_mean(
         tf.square(int_col_weights * interiorTerms)
-    ) * tf.cast(tf.shape(interiorTerms)[0], dtype=tf.float64)
+    ) * tf.cast(tf.shape(interiorTerms)[0], dtype=tf.float32)
     int_loss = int_loss * alpha[0]
     int_loss_unweighted = int_loss_unweighted * alpha[0]
 
     # Boundary loss
-    bound_loss = np.float64(0.0)
-    bound_loss_unweighted = np.float64(0.0)
+    bound_loss = np.float32(0.0)
+    bound_loss_unweighted = np.float32(0.0)
     bound_loss_unweighted = tf.reduce_mean(tf.square(boundaryTerms)) * tf.cast(
-        tf.shape(boundaryTerms)[0], dtype=tf.float64
+        tf.shape(boundaryTerms)[0], dtype=tf.float32
     )
     bound_loss = tf.reduce_mean(
         tf.square(bound_col_weights * boundaryTerms)
-    ) * tf.cast(tf.shape(boundaryTerms)[0], dtype=tf.float64)
+    ) * tf.cast(tf.shape(boundaryTerms)[0], dtype=tf.float32)
     bound_loss = bound_loss * alpha[1]
     bound_loss_unweighted = bound_loss_unweighted * alpha[1]
 
     # Data loss
-    data_loss = np.float64(0.0)
-    data_loss_unweighted = np.float64(0.0)
+    data_loss = np.float32(0.0)
+    data_loss_unweighted = np.float32(0.0)
     data_loss_unweighted = tf.reduce_mean(tf.square(dataTerms)) * tf.cast(
-        tf.shape(dataTerms)[0], dtype=tf.float64
+        tf.shape(dataTerms)[0], dtype=tf.float32
     )
     data_loss = tf.reduce_mean(
         tf.square(data_col_weights * dataTerms)
-    ) * tf.cast(tf.shape(dataTerms)[0], dtype=tf.float64)
+    ) * tf.cast(tf.shape(dataTerms)[0], dtype=tf.float32)
     data_loss = data_loss * alpha[2]
     data_loss_unweighted = data_loss_unweighted * alpha[2]
 
     # Regularization loss
-    reg_loss = np.float64(0.0)
-    reg_loss_unweighted = np.float64(0.0)
+    reg_loss = np.float32(0.0)
+    reg_loss_unweighted = np.float32(0.0)
     reg_loss_unweighted = tf.reduce_mean(
         tf.square(regularizationTerms)
-    ) * tf.cast(tf.shape(regularizationTerms)[0], dtype=tf.float64)
+    ) * tf.cast(tf.shape(regularizationTerms)[0], dtype=tf.float32)
     reg_loss = tf.reduce_mean(
         tf.square(reg_col_weights * regularizationTerms)
-    ) * tf.cast(tf.shape(regularizationTerms)[0], dtype=tf.float64)
+    ) * tf.cast(tf.shape(regularizationTerms)[0], dtype=tf.float32)
     reg_loss = reg_loss * alpha[3]
     reg_loss_unweighted = reg_loss_unweighted * alpha[3]
 
@@ -242,13 +242,13 @@ def loss_fn_annealing(
     alpha,
 ):
     # Interior loss
-    int_loss = np.float64(0.0)
+    int_loss = np.float32(0.0)
     for i_term, term in enumerate(interiorTerms):
         int_loss_terms[i_term] = tf.reduce_mean(tf.square(term))
         int_loss += int_loss_weights[i_term] * tf.reduce_mean(tf.square(term))
 
     # Boundary loss
-    bound_loss = np.float64(0.0)
+    bound_loss = np.float32(0.0)
     for i_term, term in enumerate(boundaryTerms):
         bound_loss_terms[i_term] = tf.reduce_mean(tf.square(term))
         bound_loss += bound_loss_weights[i_term] * tf.reduce_mean(
@@ -256,7 +256,7 @@ def loss_fn_annealing(
         )
 
     # Data loss
-    data_loss = np.float64(0.0)
+    data_loss = np.float32(0.0)
     for i_term, term in enumerate(dataTerms):
         data_loss_terms[i_term] = tf.reduce_mean(tf.square(term))
         data_loss += data_loss_weights[i_term] * tf.reduce_mean(
@@ -264,7 +264,7 @@ def loss_fn_annealing(
         )
 
     # Regularization loss
-    reg_loss = np.float64(0.0)
+    reg_loss = np.float32(0.0)
     for i_term, term in enumerate(regularizationTerms):
         reg_loss_terms[i_term] = tf.reduce_mean(tf.square(term))
         reg_loss += reg_loss_weights[i_term] * tf.reduce_mean(tf.square(term))
@@ -282,26 +282,26 @@ def loss_fn(
     interiorTerms, boundaryTerms, dataTerms, regularizationTerms, alpha
 ):
     # Interior loss
-    int_loss = np.float64(0.0)
+    int_loss = np.float32(0.0)
     for i_term, term in enumerate(interiorTerms):
         int_loss += tf.reduce_mean(tf.square(term))
 
     int_loss = int_loss * alpha[0]
 
     # Boundary loss
-    bound_loss = np.float64(0.0)
+    bound_loss = np.float32(0.0)
     for i_term, term in enumerate(boundaryTerms):
         bound_loss += tf.reduce_mean(tf.square(term))
     bound_loss = bound_loss * alpha[1]
 
     # Data loss
-    data_loss = np.float64(0.0)
+    data_loss = np.float32(0.0)
     for i_term, term in enumerate(dataTerms):
         data_loss += tf.reduce_mean(tf.square(term))
     data_loss = data_loss * alpha[2]
 
     # Regularization loss
-    reg_loss = np.float64(0.0)
+    reg_loss = np.float32(0.0)
     for i_term, term in enumerate(regularizationTerms):
         reg_loss += tf.reduce_mean(tf.square(term))
     reg_loss = reg_loss * alpha[3]
@@ -1028,17 +1028,17 @@ def get_loss_and_flat_grad_annealing(
 def setResidualRescaling(self, weights):
     # useful variables
     ce = self.params["ce0"]
-    cs = np.float64(1.0 / 2.0) * (self.params["cs_a0"] + self.params["cs_c0"])
+    cs = np.float32(1.0 / 2.0) * (self.params["cs_a0"] + self.params["cs_c0"])
     cs_a = self.params["cs_a0"]
     cs_c = self.params["cs_c0"]
-    Ds_a = np.float64(self.params["D_s_a"](self.params["T"], self.params["R"]))
-    Ds_c = np.float64(
+    Ds_a = np.float32(self.params["D_s_a"](self.params["T"], self.params["R"]))
+    Ds_c = np.float32(
         self.params["D_s_c"](
             cs_c,
             self.params["T"],
             self.params["R"],
             self.params["cscamax"],
-            np.float64(1.0),
+            np.float32(1.0),
         )
     )
     F = self.params["F"]
@@ -1054,26 +1054,26 @@ def setResidualRescaling(self, weights):
     C = abs(self.params["C"])
 
     # Interior Residuals
-    self.phie_transp_resc = np.float64(1.0) / j_a
-    self.phis_c_transp_resc = np.float64(1.0) / j_c
-    self.cs_a_transp_resc = (np.float64(3600) / np.float64(C)) / (cs_a)
-    self.cs_c_transp_resc = (np.float64(3600) / np.float64(C)) / (
+    self.phie_transp_resc = np.float32(1.0) / j_a
+    self.phis_c_transp_resc = np.float32(1.0) / j_c
+    self.cs_a_transp_resc = (np.float32(3600) / np.float32(C)) / (cs_a)
+    self.cs_c_transp_resc = (np.float32(3600) / np.float32(C)) / (
         self.params["cscamax"] - cs_c
     )
 
     # Interior points
     if self.activeInt:
         if self.annealingWeights:
-            w_phie_int = np.float64(1.0)
-            w_phis_c_int = np.float64(1.0)
-            w_cs_a_int = np.float64(1.0)
-            w_cs_c_int = np.float64(1.0)
+            w_phie_int = np.float32(1.0)
+            w_phis_c_int = np.float32(1.0)
+            w_cs_a_int = np.float32(1.0)
+            w_cs_c_int = np.float32(1.0)
 
         elif weights is None:
-            w_phie_int = np.float64(1.0)
-            w_phis_c_int = np.float64(1.0)
-            w_cs_a_int = np.float64(50.0)
-            w_cs_c_int = np.float64(50.0)
+            w_phie_int = np.float32(1.0)
+            w_phis_c_int = np.float32(1.0)
+            w_cs_a_int = np.float32(50.0)
+            w_cs_c_int = np.float32(50.0)
         else:
             w_phie_int = weights["phie_int"]
             w_phis_c_int = weights["phis_c_int"]
@@ -1093,8 +1093,8 @@ def setResidualRescaling(self, weights):
             w_cs_c_int * self.interiorTerms_rescale_unweighted[3],
         ]
     else:
-        self.interiorTerms_rescale_unweighted = [np.float64(0.0)]
-        self.interiorTerms_rescale = [np.float64(0.0)]
+        self.interiorTerms_rescale_unweighted = [np.float32(0.0)]
+        self.interiorTerms_rescale = [np.float32(0.0)]
 
     # Boundary Residuals
     self.cs_a_bound_resc = Ds_a / j_a
@@ -1103,16 +1103,16 @@ def setResidualRescaling(self, weights):
     self.cs_c_bound_j_resc = Ds_c / j_c
     if self.activeBound:
         if self.annealingWeights:
-            w_cs_a_rmin_bound = np.float64(1.0)
-            w_cs_c_rmin_bound = np.float64(1.0)
-            w_cs_a_rmax_bound = np.float64(1.0)
-            w_cs_c_rmax_bound = np.float64(1.0)
+            w_cs_a_rmin_bound = np.float32(1.0)
+            w_cs_c_rmin_bound = np.float32(1.0)
+            w_cs_a_rmax_bound = np.float32(1.0)
+            w_cs_c_rmax_bound = np.float32(1.0)
 
         elif weights is None:
-            w_cs_a_rmin_bound = np.float64(1.0)
-            w_cs_c_rmin_bound = np.float64(1.0)
-            w_cs_a_rmax_bound = np.float64(10)
-            w_cs_c_rmax_bound = np.float64(10)
+            w_cs_a_rmin_bound = np.float32(1.0)
+            w_cs_c_rmin_bound = np.float32(1.0)
+            w_cs_a_rmax_bound = np.float32(10)
+            w_cs_c_rmax_bound = np.float32(10)
 
         else:
             w_cs_a_rmin_bound = weights["cs_a_rmin_bound"]
@@ -1133,23 +1133,23 @@ def setResidualRescaling(self, weights):
             w_cs_c_rmax_bound * self.boundaryTerms_rescale_unweighted[3],
         ]
     else:
-        self.boundaryTerms_rescale = [np.float64(0.0)]
-        self.boundaryTerms_rescale_unweighted = [np.float64(0.0)]
+        self.boundaryTerms_rescale = [np.float32(0.0)]
+        self.boundaryTerms_rescale_unweighted = [np.float32(0.0)]
 
     # Data Residuals
     self.n_data_terms = 4
     if self.activeData:
         if self.annealingWeights:
-            w_phie_dat = np.float64(1.0)
-            w_phis_c_dat = np.float64(1.0)
-            w_cs_a_dat = np.float64(1.0)
-            w_cs_c_dat = np.float64(1.0)
+            w_phie_dat = np.float32(1.0)
+            w_phis_c_dat = np.float32(1.0)
+            w_cs_a_dat = np.float32(1.0)
+            w_cs_c_dat = np.float32(1.0)
 
         elif weights is None:
-            w_phie_dat = np.float64(1.0)
-            w_phis_c_dat = np.float64(1.0)
-            w_cs_a_dat = np.float64(1.0)
-            w_cs_c_dat = np.float64(1.0)
+            w_phie_dat = np.float32(1.0)
+            w_phis_c_dat = np.float32(1.0)
+            w_cs_a_dat = np.float32(1.0)
+            w_cs_c_dat = np.float32(1.0)
         else:
             w_phie_dat = weights["phie_dat"]
             w_phis_c_dat = weights["phis_c_dat"]
@@ -1161,16 +1161,16 @@ def setResidualRescaling(self, weights):
             0 for _ in range(self.n_data_terms)
         ]
         self.dataTerms_rescale_unweighted[self.ind_phie_data] = abs(
-            np.float64(1.0 / self.params["rescale_phie"])
+            np.float32(1.0 / self.params["rescale_phie"])
         )
         self.dataTerms_rescale_unweighted[self.ind_phis_c_data] = abs(
-            np.float64(1.0 / self.params["rescale_phis_c"])
+            np.float32(1.0 / self.params["rescale_phis_c"])
         )
         self.dataTerms_rescale_unweighted[self.ind_cs_a_data] = abs(
-            np.float64(1.0 / self.params["rescale_cs_a"])
+            np.float32(1.0 / self.params["rescale_cs_a"])
         )
         self.dataTerms_rescale_unweighted[self.ind_cs_c_data] = abs(
-            np.float64(1.0 / self.params["rescale_cs_c"])
+            np.float32(1.0 / self.params["rescale_cs_c"])
         )
         self.dataTerms_rescale[self.ind_phie_data] = abs(
             w_phie_dat * self.dataTerms_rescale_unweighted[self.ind_phie_data]
@@ -1187,17 +1187,17 @@ def setResidualRescaling(self, weights):
         )
         self.csDataTerms_ind = [self.ind_cs_a_data, self.ind_cs_c_data]
     else:
-        self.dataTerms_rescale_unweighted = [np.float64(0.0)]
-        self.dataTerms_rescale = [np.float64(0.0)]
+        self.dataTerms_rescale_unweighted = [np.float32(0.0)]
+        self.dataTerms_rescale = [np.float32(0.0)]
         self.csDataTerms_ind = []
 
     # Regularization Residuals
     if self.activeReg:
-        self.regTerms_rescale_unweighted = [np.float64(0.0)]
-        self.regTerms_rescale = [np.float64(0.0)]
+        self.regTerms_rescale_unweighted = [np.float32(0.0)]
+        self.regTerms_rescale = [np.float32(0.0)]
     else:
-        self.regTerms_rescale_unweighted = [np.float64(0.0)]
-        self.regTerms_rescale = [np.float64(0.0)]
+        self.regTerms_rescale_unweighted = [np.float32(0.0)]
+        self.regTerms_rescale = [np.float32(0.0)]
 
     return
 
@@ -1211,7 +1211,7 @@ def data_loss(
     y_batch_trainList,
 ):
     if not self.activeData:
-        return [[np.float64(0.0)]]
+        return [[np.float32(0.0)]]
 
     # rescale
     resc_t = self.params["rescale_T"]
@@ -1219,7 +1219,7 @@ def data_loss(
 
     surfR_a = self.params["Rs_a"] * tf.ones(
         x_batch_trainList[self.ind_phie_data][:, self.ind_t].shape,
-        dtype=tf.dtypes.float64,
+        dtype=tf.dtypes.float32,
     )
 
     out_phie = self.model(
@@ -1255,7 +1255,7 @@ def data_loss(
 
     i0_a_phie = self.params["i0_a"](
         cse_a_pred_rescaled,
-        self.params["ce0"] * tf.ones(shape_i0_a, dtype=tf.dtypes.float64),
+        self.params["ce0"] * tf.ones(shape_i0_a, dtype=tf.dtypes.float32),
         self.params["T"],
         self.params["alpha_a"],
         self.params["csanmax"],
@@ -1275,7 +1275,7 @@ def data_loss(
 
     surfR_a = self.params["Rs_a"] * tf.ones(
         x_batch_trainList[self.ind_phis_c_data][:, self.ind_t].shape,
-        dtype=tf.dtypes.float64,
+        dtype=tf.dtypes.float32,
     )
     out_phis_c = self.model(
         [
@@ -1308,7 +1308,7 @@ def data_loss(
     shape_i0_a = tf.shape(cse_a_pred_rescaled)
     i0_a_phis = self.params["i0_a"](
         cse_a_pred_rescaled,
-        self.params["ce0"] * tf.ones(shape_i0_a, dtype=tf.dtypes.float64),
+        self.params["ce0"] * tf.ones(shape_i0_a, dtype=tf.dtypes.float32),
         self.params["T"],
         self.params["alpha_a"],
         self.params["csanmax"],
@@ -1413,7 +1413,7 @@ def data_loss(
 @conditional_decorator(tf.function, optimized)
 def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
     if not self.activeInt:
-        return [[np.float64(0.0)]]
+        return [[np.float32(0.0)]]
 
     tmin_int = tf.math.minimum(self.tmin_int_bound, self.tmax)
 
@@ -1425,46 +1425,46 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
                 (self.batch_size_int, 1),
                 minval=tmin_int,
                 maxval=tmax,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
         else:
             t = tf.random.uniform(
                 (self.batch_size_int, 1),
                 minval=tmin_int,
                 maxval=self.tmax,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
 
         r_a = tf.random.uniform(
             (self.batch_size_int, 1),
-            minval=self.rmin + np.float64(1e-12),
+            minval=self.rmin + np.float32(1e-12),
             maxval=self.rmax_a,
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         r_c = tf.random.uniform(
             (self.batch_size_int, 1),
-            minval=self.rmin + np.float64(1e-12),
+            minval=self.rmin + np.float32(1e-12),
             maxval=self.rmax_c,
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
-        dummyR = tf.zeros((self.batch_size_int, 1), dtype=tf.dtypes.float64)
+        dummyR = tf.zeros((self.batch_size_int, 1), dtype=tf.dtypes.float32)
         rSurf_a = self.rmax_a * tf.ones(
-            (self.batch_size_int, 1), dtype=tf.dtypes.float64
+            (self.batch_size_int, 1), dtype=tf.dtypes.float32
         )
         rSurf_c = self.rmax_c * tf.ones(
-            (self.batch_size_int, 1), dtype=tf.dtypes.float64
+            (self.batch_size_int, 1), dtype=tf.dtypes.float32
         )
         deg_i0_a = tf.random.uniform(
             (self.batch_size_int, 1),
             minval=self.params["deg_i0_a_min_eff"],
             maxval=self.params["deg_i0_a_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         deg_ds_c = tf.random.uniform(
             (self.batch_size_int, 1),
             minval=self.params["deg_ds_c_min_eff"],
             maxval=self.params["deg_ds_c_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
 
     elif self.collocationMode == "fixed":
@@ -1485,12 +1485,12 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
         rSurf_a = int_col_pts[self.ind_int_col_r_maxa]
         r_c = int_col_pts[self.ind_int_col_r_c]
         rSurf_c = int_col_pts[self.ind_int_col_r_maxc]
-        dummyR = tf.zeros(r_a.shape, dtype=tf.dtypes.float64)
+        dummyR = tf.zeros(r_a.shape, dtype=tf.dtypes.float32)
         dummy_par = tf.random.uniform(
             (self.batch_size_int, 1),
-            minval=np.float64(1),
-            maxval=np.float64(1),
-            dtype=tf.dtypes.float64,
+            minval=np.float32(1),
+            maxval=np.float32(1),
+            dtype=tf.dtypes.float32,
         )
         deg_i0_a = int_col_params[self.ind_int_col_params_deg_i0_a]
         deg_ds_c = int_col_params[self.ind_int_col_params_deg_ds_c]
@@ -1499,8 +1499,8 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
     resc_t = self.params["rescale_T"]
     resc_r = self.params["rescale_R"]
     # constants
-    ce = self.params["ce0"] * tf.ones(t.shape, dtype=tf.dtypes.float64)
-    phis_a = tf.zeros(t.shape, dtype=tf.dtypes.float64)
+    ce = self.params["ce0"] * tf.ones(t.shape, dtype=tf.dtypes.float32)
+    phis_a = tf.zeros(t.shape, dtype=tf.dtypes.float32)
 
     with tf.GradientTape(
         watch_accessed_variables=False, persistent=True
@@ -1586,7 +1586,7 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
         )
         if not self.linearizeJ:
             exp1_a = tf.exp(
-                (np.float64(1.0) - self.params["alpha_a"])
+                (np.float32(1.0) - self.params["alpha_a"])
                 * self.params["F"]
                 * eta_a
                 / (self.params["R"] * self.params["T"])
@@ -1608,7 +1608,7 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
         cs_a_r = tape.gradient(cs_a, r_a)
         ds_a = (
             self.params["D_s_a"](self.params["T"], self.params["R"])
-            + np.float64(0.0) * r_a
+            + np.float32(0.0) * r_a
         )
 
         # Equations at cathode
@@ -1628,7 +1628,7 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
         )
         if not self.linearizeJ:
             exp1_c = tf.exp(
-                (np.float64(1.0) - self.params["alpha_c"])
+                (np.float32(1.0) - self.params["alpha_c"])
                 * self.params["F"]
                 * eta_c
                 / (self.params["R"] * self.params["T"])
@@ -1656,7 +1656,7 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
                 self.params["cscamax"],
                 deg_ds_c,
             )
-            + np.float64(0.0) * r_c
+            + np.float32(0.0) * r_c
         )
 
     # Equations at anode
@@ -1681,13 +1681,13 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
         [
             cs_a_t
             - cs_a_r_r * ds_a
-            - np.float64(2.0) * ds_a * cs_a_r / r_a
+            - np.float32(2.0) * ds_a * cs_a_r / r_a
             - ds_a_r * cs_a_r
         ],  # cs at anode
         [
             cs_c_t
             - cs_c_r_r * ds_c
-            - np.float64(2.0) * ds_c * cs_c_r / r_c
+            - np.float32(2.0) * ds_c * cs_c_r / r_c
             - ds_c_r * cs_c_r
         ],  # cs at cathode
     ]
@@ -1696,7 +1696,7 @@ def interior_loss(self, int_col_pts=None, int_col_params=None, tmax=None):
 @conditional_decorator(tf.function, optimized)
 def boundary_loss(self, bound_col_pts=None, bound_col_params=None, tmax=None):
     if not self.activeBound:
-        return [[np.float64(0.0)]]
+        return [[np.float32(0.0)]]
 
     tmin_bound = tf.math.minimum(self.tmin_int_bound, self.tmax)
 
@@ -1708,36 +1708,36 @@ def boundary_loss(self, bound_col_pts=None, bound_col_params=None, tmax=None):
                 (self.batch_size_bound, 1),
                 minval=tmin_bound,
                 maxval=tmax,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
         else:
             t_bound = tf.random.uniform(
                 (self.batch_size_bound, 1),
                 minval=tmin_bound,
                 maxval=self.tmax,
-                dtype=tf.dtypes.float64,
+                dtype=tf.dtypes.float32,
             )
 
         r_0_bound = tf.zeros(
-            (self.batch_size_bound, 1), dtype=tf.dtypes.float64
+            (self.batch_size_bound, 1), dtype=tf.dtypes.float32
         )
         r_max_a_bound = self.rmax_a * tf.ones(
-            (self.batch_size_bound, 1), dtype=tf.dtypes.float64
+            (self.batch_size_bound, 1), dtype=tf.dtypes.float32
         )
         r_max_c_bound = self.rmax_c * tf.ones(
-            (self.batch_size_bound, 1), dtype=tf.dtypes.float64
+            (self.batch_size_bound, 1), dtype=tf.dtypes.float32
         )
         deg_i0_a_bound = tf.random.uniform(
             (self.batch_size_bound, 1),
             minval=self.params["deg_i0_a_min_eff"],
             maxval=self.params["deg_i0_a_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
         deg_ds_c_bound = tf.random.uniform(
             (self.batch_size_bound, 1),
             minval=self.params["deg_ds_c_min_eff"],
             maxval=self.params["deg_ds_c_max_eff"],
-            dtype=tf.dtypes.float64,
+            dtype=tf.dtypes.float32,
         )
 
     if self.collocationMode == "fixed":
@@ -1869,11 +1869,11 @@ def boundary_loss(self, bound_col_pts=None, bound_col_params=None, tmax=None):
         [cs_r0_a_bound_r],
         [cs_r0_c_bound_r * deg_ds_c_bound],
         [
-            (np.float64(1.0) - tf.exp(-t_bound / self.hard_IC_timescale))
+            (np.float32(1.0) - tf.exp(-t_bound / self.hard_IC_timescale))
             * (cs_rmax_a_bound_r + j_a / ds_rmax_a_bound)
         ],
         [
-            (np.float64(1.0) - tf.exp(-t_bound / self.hard_IC_timescale))
+            (np.float32(1.0) - tf.exp(-t_bound / self.hard_IC_timescale))
             * (cs_rmax_c_bound_r + j_c / ds_rmax_c_bound)
         ],
     ]
@@ -1882,6 +1882,6 @@ def boundary_loss(self, bound_col_pts=None, bound_col_params=None, tmax=None):
 @conditional_decorator(tf.function, optimized)
 def regularization_loss(self, reg_col_pts=None, tmax=None):
     if not self.activeReg:
-        return [[np.float64(0.0)]]
+        return [[np.float32(0.0)]]
 
-    return [[np.float64(0.0)]]
+    return [[np.float32(0.0)]]

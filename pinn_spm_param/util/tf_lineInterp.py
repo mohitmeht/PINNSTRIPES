@@ -11,7 +11,7 @@ def sortInput(x, y):
     return x, y
 
 
-def generateTFSpline(x, y, filename, funcname, precision="float64", mode="w+"):
+def generateTFSpline(x, y, filename, funcname, precision="float32", mode="w+"):
     x, y = sortInput(x, y)
     # Get cubic spline
     cs = CubicSpline(x, y)
@@ -62,7 +62,7 @@ def generateTFSpline(x, y, filename, funcname, precision="float64", mode="w+"):
     f.close()
 
 
-def generateTFPoly(coeffs, filename, funcname, precision="float64", mode="w+"):
+def generateTFPoly(coeffs, filename, funcname, precision="float32", mode="w+"):
     coeffs = list(coeffs)
     f = open(filename, mode)
     if mode == "w+":

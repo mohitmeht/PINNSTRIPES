@@ -5,47 +5,47 @@ import tensorflow as tf
 from keras.backend import set_floatx
 from uocp_cs import uocp_a_fun_x, uocp_c_fun_x
 
-set_floatx("float64")
+set_floatx("float32")
 
 
 def uocp_a_simp(cs_a, csanmax):
     x = cs_a / csanmax
-    x = tf.clip_by_value(x, np.float64(0.0), np.float64(1.0))
-    return np.float64(0.2) - np.float64(0.2) * x
+    x = tf.clip_by_value(x, np.float32(0.0), np.float32(1.0))
+    return np.float32(0.2) - np.float32(0.2) * x
 
 
 def uocp_a_fun(cs_a, csanmax):
     x = cs_a / csanmax
-    x = tf.clip_by_value(x, np.float64(0.0), np.float64(1.0))
+    x = tf.clip_by_value(x, np.float32(0.0), np.float32(1.0))
     return uocp_a_fun_x(x)
 
 
 def uocp_c_fun(cs_c, cscamax):
     x = cs_c / cscamax
-    x = tf.clip_by_value(x, np.float64(0.0), np.float64(1.0))
+    x = tf.clip_by_value(x, np.float32(0.0), np.float32(1.0))
     return uocp_c_fun_x(x)
 
 
 def uocp_c_simp(cs_c, cscamax):
     x = cs_c / cscamax
-    x = tf.clip_by_value(x, np.float64(0.0), np.float64(1.0))
-    return np.float64(5.0) - np.float64(1.4) * x
+    x = tf.clip_by_value(x, np.float32(0.0), np.float32(1.0))
+    return np.float32(5.0) - np.float32(1.4) * x
 
 
 def i0_a_fun(cs_a_max, ce, T, alpha, csanmax, R):
     return (
-        np.float64(2.5)
-        * np.float64(0.27)
+        np.float32(2.5)
+        * np.float32(0.27)
         * tf.exp(
-            np.float64(
+            np.float32(
                 (-30.0e6 / R)
-                * (np.float64(1.0) / T - np.float64(1.0) / np.float64(303.15))
+                * (np.float32(1.0) / T - np.float32(1.0) / np.float32(303.15))
             )
         )
-        * tf.math.maximum(ce, np.float64(0.0)) ** alpha
-        * tf.math.maximum(csanmax - cs_a_max, np.float64(0.0)) ** alpha
-        * tf.math.maximum(cs_a_max, np.float64(0.0))
-        ** (np.float64(1.0) - alpha)
+        * tf.math.maximum(ce, np.float32(0.0)) ** alpha
+        * tf.math.maximum(csanmax - cs_a_max, np.float32(0.0)) ** alpha
+        * tf.math.maximum(cs_a_max, np.float32(0.0))
+        ** (np.float32(1.0) - alpha)
     )
 
 
@@ -57,117 +57,117 @@ def i0_a_degradation_param_fun(
 
 
 def i0_a_simp(cs_a_max, ce, T, alpha, csanmax, R):
-    return np.float64(2.0) * np.ones(ce.shape, dtype="float64")
+    return np.float32(2.0) * np.ones(ce.shape, dtype="float32")
 
 
 def i0_a_simp_degradation_param(
     cs_a_max, ce, T, alpha, csanmax, R, degradation_param
 ):
     return (
-        np.float64(2.0)
+        np.float32(2.0)
         * tf.reshape(degradation_param, tf.shape(ce))
-        * np.ones(ce.shape, dtype="float64")
+        * np.ones(ce.shape, dtype="float32")
     )
 
 
 def i0_c_fun(cs_c_max, ce, T, alpha, cscamax, R):
     x = cs_c_max / cscamax
-    x = tf.clip_by_value(x, np.float64(0.0), np.float64(1.0))
+    x = tf.clip_by_value(x, np.float32(0.0), np.float32(1.0))
     return (
-        np.float64(9.0)
+        np.float32(9.0)
         * (
-            np.float64(1.650452829641290e01) * x**5
-            - np.float64(7.523567141488800e01) * x**4
-            + np.float64(1.240524690073040e02) * x**3
-            - np.float64(9.416571081287610e01) * x**2
-            + np.float64(3.249768821737960e01) * x
-            - np.float64(3.585290065824760e00)
+            np.float32(1.650452829641290e01) * x**5
+            - np.float32(7.523567141488800e01) * x**4
+            + np.float32(1.240524690073040e02) * x**3
+            - np.float32(9.416571081287610e01) * x**2
+            + np.float32(3.249768821737960e01) * x
+            - np.float32(3.585290065824760e00)
         )
-        * tf.math.maximum(ce / np.float64(1.2), np.float64(0.0)) ** alpha
+        * tf.math.maximum(ce / np.float32(1.2), np.float32(0.0)) ** alpha
         * tf.exp(
-            (np.float64(-30.0e6) / R)
-            * (np.float64(1.0) / T - np.float64(1.0 / 303.15))
+            (np.float32(-30.0e6) / R)
+            * (np.float32(1.0) / T - np.float32(1.0 / 303.15))
         )
     )
 
 
 def i0_c_simp(cs_c_max, ce, T, alpha, cscamax, R):
-    return np.float64(3.0) * np.ones(ce.shape, dtype="float64")
+    return np.float32(3.0) * np.ones(ce.shape, dtype="float32")
 
 
 def ds_a_fun(T, R):
-    return np.float64(3.0e-14) * tf.exp(
-        (np.float64(-30.0e6) / R)
-        * (np.float64(1.0) / T - np.float64(1.0 / 303.15))
+    return np.float32(3.0e-14) * tf.exp(
+        (np.float32(-30.0e6) / R)
+        * (np.float32(1.0) / T - np.float32(1.0 / 303.15))
     )
 
 
 def grad_ds_a_cs_a(T, R):
-    return np.float64(0.0)
+    return np.float32(0.0)
 
 
 def ds_a_fun_simp(T, R):
-    return np.float64(3.0e-14)
+    return np.float32(3.0e-14)
 
 
 def ds_c_fun(cs_c, T, R, cscamax):
     x = cs_c / cscamax
-    x = tf.clip_by_value(x, np.float64(0.0), np.float64(1.0))
+    x = tf.clip_by_value(x, np.float32(0.0), np.float32(1.0))
     power = (
-        -np.float64(2.509010843479270e02) * x**10
-        + np.float64(2.391026725259970e03) * x**9
-        - np.float64(4.868420267611360e03) * x**8
-        - np.float64(8.331104102921070e01) * x**7
-        + np.float64(1.057636028329000e04) * x**6
-        - np.float64(1.268324548348120e04) * x**5
-        + np.float64(5.016272167775530e03) * x**4
-        + np.float64(9.824896659649480e02) * x**3
-        - np.float64(1.502439339070900e03) * x**2
-        + np.float64(4.723709304247700e02) * x
-        - np.float64(6.526092046397090e01)
+        -np.float32(2.509010843479270e02) * x**10
+        + np.float32(2.391026725259970e03) * x**9
+        - np.float32(4.868420267611360e03) * x**8
+        - np.float32(8.331104102921070e01) * x**7
+        + np.float32(1.057636028329000e04) * x**6
+        - np.float32(1.268324548348120e04) * x**5
+        + np.float32(5.016272167775530e03) * x**4
+        + np.float32(9.824896659649480e02) * x**3
+        - np.float32(1.502439339070900e03) * x**2
+        + np.float32(4.723709304247700e02) * x
+        - np.float32(6.526092046397090e01)
     )
     return (
-        np.float64(1.5)
-        * (np.float64(1.5) * np.float64(10.0) ** (power))
+        np.float32(1.5)
+        * (np.float32(1.5) * np.float32(10.0) ** (power))
         * tf.exp(
-            (np.float64(-30.0e6) / R)
-            * (np.float64(1.0) / T - np.float64(1.0 / 303.15))
+            (np.float32(-30.0e6) / R)
+            * (np.float32(1.0) / T - np.float32(1.0 / 303.15))
         )
     )
 
 
 def grad_ds_c_cs_c(cs_c, T, R, cscamax):
     return (
-        np.float64(2.25)
-        * np.float64(10.0)
+        np.float32(2.25)
+        * np.float32(10.0)
         ** (
-            -np.float64(250.901084347927) * cs_c**10 / cscamax**10
-            + np.float64(2391.02672525997) * cs_c**9 / cscamax**9
-            - np.float64(4868.42026761136) * cs_c**8 / cscamax**8
-            - np.float64(83.3110410292107) * cs_c**7 / cscamax**7
-            + np.float64(10576.36028329) * cs_c**6 / cscamax**6
-            - np.float64(12683.2454834812) * cs_c**5 / cscamax**5
-            + np.float64(5016.27216777553) * cs_c**4 / cscamax**4
-            + np.float64(982.489665964948) * cs_c**3 / cscamax**3
-            - np.float64(1502.4393390709) * cs_c**2 / cscamax**2
-            + np.float64(472.37093042477) * cs_c / cscamax
-            - np.float64(65.2609204639709)
+            -np.float32(250.901084347927) * cs_c**10 / cscamax**10
+            + np.float32(2391.02672525997) * cs_c**9 / cscamax**9
+            - np.float32(4868.42026761136) * cs_c**8 / cscamax**8
+            - np.float32(83.3110410292107) * cs_c**7 / cscamax**7
+            + np.float32(10576.36028329) * cs_c**6 / cscamax**6
+            - np.float32(12683.2454834812) * cs_c**5 / cscamax**5
+            + np.float32(5016.27216777553) * cs_c**4 / cscamax**4
+            + np.float32(982.489665964948) * cs_c**3 / cscamax**3
+            - np.float32(1502.4393390709) * cs_c**2 / cscamax**2
+            + np.float32(472.37093042477) * cs_c / cscamax
+            - np.float32(65.2609204639709)
         )
         * (
-            -np.float64(5777.21096635578) * cs_c**9 / cscamax**10
-            + np.float64(49549.8824508058) * cs_c**8 / cscamax**9
-            - np.float64(89679.615477056) * cs_c**7 / cscamax**8
-            - np.float64(1342.81532808973) * cs_c**6 / cscamax**7
-            + np.float64(146117.817158627) * cs_c**5 / cscamax**6
-            - np.float64(146021.259905239) * cs_c**4 / cscamax**5
-            + np.float64(46201.5740636835) * cs_c**3 / cscamax**4
-            + np.float64(6786.79817661477) * cs_c**2 / cscamax**3
-            - np.float64(6918.98885054496) * cs_c / cscamax**2
-            + np.float64(1087.6742627598) / cscamax
+            -np.float32(5777.21096635578) * cs_c**9 / cscamax**10
+            + np.float32(49549.8824508058) * cs_c**8 / cscamax**9
+            - np.float32(89679.615477056) * cs_c**7 / cscamax**8
+            - np.float32(1342.81532808973) * cs_c**6 / cscamax**7
+            + np.float32(146117.817158627) * cs_c**5 / cscamax**6
+            - np.float32(146021.259905239) * cs_c**4 / cscamax**5
+            + np.float32(46201.5740636835) * cs_c**3 / cscamax**4
+            + np.float32(6786.79817661477) * cs_c**2 / cscamax**3
+            - np.float32(6918.98885054496) * cs_c / cscamax**2
+            + np.float32(1087.6742627598) / cscamax
         )
         * np.exp(
-            -np.float64(30000000.0)
-            * (-np.float64(0.0032986970146792) + np.float64(1.0) / T)
+            -np.float32(30000000.0)
+            * (-np.float32(0.0032986970146792) + np.float32(1.0) / T)
             / R
         )
     )
@@ -179,54 +179,54 @@ def ds_c_degradation_param_fun(cs_c, T, R, cscamax, degradation_param):
 
 
 def ds_c_fun_simp(cs_c, T, R, cscamax):
-    return np.float64(3.5e-15) * np.ones(cs_c.shape, dtype="float64")
+    return np.float32(3.5e-15) * np.ones(cs_c.shape, dtype="float32")
 
 
 def ds_c_fun_plot(cs_c, T, R, cscamax):
     x = cs_c / cscamax
-    x = tf.clip_by_value(x, np.float64(0.0), np.float64(1.0))
+    x = tf.clip_by_value(x, np.float32(0.0), np.float32(1.0))
     power = (
-        -np.float64(2.509010843479270e02) * x**10
-        + np.float64(2.391026725259970e03) * x**9
-        - np.float64(4.868420267611360e03) * x**8
-        - np.float64(8.331104102921070e01) * x**7
-        + np.float64(1.057636028329000e04) * x**6
-        - np.float64(1.268324548348120e04) * x**5
-        + np.float64(5.016272167775530e03) * x**4
-        + np.float64(9.824896659649480e02) * x**3
-        - np.float64(1.502439339070900e03) * x**2
-        + np.float64(4.723709304247700e02) * x
-        - np.float64(6.526092046397090e01)
+        -np.float32(2.509010843479270e02) * x**10
+        + np.float32(2.391026725259970e03) * x**9
+        - np.float32(4.868420267611360e03) * x**8
+        - np.float32(8.331104102921070e01) * x**7
+        + np.float32(1.057636028329000e04) * x**6
+        - np.float32(1.268324548348120e04) * x**5
+        + np.float32(5.016272167775530e03) * x**4
+        + np.float32(9.824896659649480e02) * x**3
+        - np.float32(1.502439339070900e03) * x**2
+        + np.float32(4.723709304247700e02) * x
+        - np.float32(6.526092046397090e01)
     )
     try:
         return (
-            np.float64(1.5)
-            * (np.float64(1.5) * np.float64(10.0) ** (power))
+            np.float32(1.5)
+            * (np.float32(1.5) * np.float32(10.0) ** (power))
             * tf.exp(
-                (np.float64(-30.0e6) / R)
-                * (np.float64(1.0) / T - np.float64(1.0 / 303.15))
+                (np.float32(-30.0e6) / R)
+                * (np.float32(1.0) / T - np.float32(1.0 / 303.15))
             )
         )
     except tf.python.framework.errors_impl.InvalidArgumentError:
         return (
-            np.float64(1.5)
-            * (np.float64(1.5) * np.float64(10.0) ** (power))
+            np.float32(1.5)
+            * (np.float32(1.5) * np.float32(10.0) ** (power))
             * np.exp(
-                (np.float64(-30.0e6) / R)
-                * (np.float64(1.0) / T - np.float64(1.0 / 303.15))
+                (np.float32(-30.0e6) / R)
+                * (np.float32(1.0) / T - np.float32(1.0 / 303.15))
             )
         )
 
 
 def ds_c_fun_plot_simp(cs_c, T, R, cscamax):
-    return np.float64(3.5e-15) * np.ones(cs_c.shape, dtype="float64")
+    return np.float32(3.5e-15) * np.ones(cs_c.shape, dtype="float32")
 
 
 def ds_c_fun_simp_degradation_param(cs_c, T, R, cscamax, degradation_param):
     return (
-        np.float64(3.5e-15)
+        np.float32(3.5e-15)
         * tf.reshape(degradation_param, tf.shape(cs_c))
-        * np.ones(cs_c.shape, dtype="float64")
+        * np.ones(cs_c.shape, dtype="float32")
     )
 
 
@@ -287,20 +287,20 @@ def setParams(params, deg, bat, an, ca, ic):
     params["alpha_c"] = ca.alpha
 
     # Params to fit
-    params["Rs_a"] = an.D50 / np.float64(2.0)
-    params["Rs_c"] = ca.D50 / np.float64(2.0)
-    params["rescale_R"] = np.float64(max(params["Rs_a"], params["Rs_c"]))
+    params["Rs_a"] = an.D50 / np.float32(2.0)
+    params["Rs_c"] = ca.D50 / np.float32(2.0)
+    params["rescale_R"] = np.float32(max(params["Rs_a"], params["Rs_c"]))
     # current
     params["csanmax"] = an.csmax
     params["cscamax"] = ca.csmax
-    params["rescale_T"] = np.float64(max(bat.tmax, 1e-16))
+    params["rescale_T"] = np.float32(max(bat.tmax, 1e-16))
 
     # Typical variables magnitudes
-    params["mag_cs_a"] = np.float64(25)  # OK
-    params["mag_cs_c"] = np.float64(32.5)  # OK
-    params["mag_phis_c"] = np.float64(4.25)  # OK
-    params["mag_phie"] = np.float64(0.15)  # OK
-    params["mag_ce"] = np.float64(1.2)  # OK
+    params["mag_cs_a"] = np.float32(25)  # OK
+    params["mag_cs_c"] = np.float32(32.5)  # OK
+    params["mag_phis_c"] = np.float32(4.25)  # OK
+    params["mag_phie"] = np.float32(0.15)  # OK
+    params["mag_ce"] = np.float32(1.2)  # OK
 
     # FUNCTIONS
     params["Uocp_a"] = an.uocp
@@ -323,12 +323,12 @@ def setParams(params, deg, bat, an, ca, ic):
     j_a = (
         -(params["I_discharge"] / params["A_a"])
         * params["Rs_a"]
-        / (np.float64(3.0) * params["eps_s_a"] * params["F"] * params["L_a"])
+        / (np.float32(3.0) * params["eps_s_a"] * params["F"] * params["L_a"])
     )  # OK
     j_c = (
         (params["I_discharge"] / params["A_c"])
         * params["Rs_c"]
-        / (np.float64(3.0) * params["eps_s_c"] * params["F"] * params["L_c"])
+        / (np.float32(3.0) * params["eps_s_c"] * params["F"] * params["L_c"])
     )
     params["j_a"] = j_a
     params["j_c"] = j_c
@@ -341,7 +341,7 @@ def setParams(params, deg, bat, an, ca, ic):
         params["alpha_a"],
         params["csanmax"],
         params["R"],
-        np.float64(1.0),
+        np.float32(1.0),
     )
     Uocp_a = params["Uocp_a"](cse_a, params["csanmax"])
     params["Uocp_a0"] = Uocp_a
@@ -367,10 +367,10 @@ def setParams(params, deg, bat, an, ca, ic):
     params["rescale_cs_a"] = -ic.an.cs
     params["rescale_cs_c"] = params["cscamax"] - ic.ca.cs
     params["rescale_phis_c"] = abs(
-        np.float64(3.8) - np.float64(4.110916387038547)
+        np.float32(3.8) - np.float32(4.110916387038547)
     )  # OK
     params["rescale_phie"] = abs(
-        np.float64(-0.15) - np.float64(-0.07645356566609385)
+        np.float32(-0.15) - np.float32(-0.07645356566609385)
     )  # OK
 
     return params

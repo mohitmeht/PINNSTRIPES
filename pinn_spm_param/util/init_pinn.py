@@ -113,7 +113,7 @@ def initialize_params_from_inpt(inpt):
         HNN_modelFolder = None
     try:
         HNN_params = [
-            np.float64(entry) for entry in inpt["HNN_params"].split()
+            np.float32(entry) for entry in inpt["HNN_params"].split()
         ]
     except KeyError:
         HNN_params = None
@@ -135,7 +135,7 @@ def initialize_params_from_inpt(inpt):
     except KeyError:
         HNNTIME_modelFolder = None
     try:
-        HNNTIME_val = np.float64(inpt["HNNTIME_val"])
+        HNNTIME_val = np.float32(inpt["HNNTIME_val"])
     except (KeyError, ValueError):
         HNNTIME_val = None
     if (
@@ -168,20 +168,20 @@ def initialize_params_from_inpt(inpt):
     # WEIGHTING
     try:
         weights = {}
-        weights["phie_int"] = np.float64(inpt["w_phie_int"])
-        weights["phis_c_int"] = np.float64(inpt["w_phis_c_int"])
-        weights["cs_a_int"] = np.float64(inpt["w_cs_a_int"])
-        weights["cs_c_int"] = np.float64(inpt["w_cs_c_int"])
+        weights["phie_int"] = np.float32(inpt["w_phie_int"])
+        weights["phis_c_int"] = np.float32(inpt["w_phis_c_int"])
+        weights["cs_a_int"] = np.float32(inpt["w_cs_a_int"])
+        weights["cs_c_int"] = np.float32(inpt["w_cs_c_int"])
 
-        weights["cs_a_rmin_bound"] = np.float64(inpt["w_cs_a_rmin_bound"])
-        weights["cs_a_rmax_bound"] = np.float64(inpt["w_cs_a_rmax_bound"])
-        weights["cs_c_rmin_bound"] = np.float64(inpt["w_cs_c_rmin_bound"])
-        weights["cs_c_rmax_bound"] = np.float64(inpt["w_cs_c_rmax_bound"])
+        weights["cs_a_rmin_bound"] = np.float32(inpt["w_cs_a_rmin_bound"])
+        weights["cs_a_rmax_bound"] = np.float32(inpt["w_cs_a_rmax_bound"])
+        weights["cs_c_rmin_bound"] = np.float32(inpt["w_cs_c_rmin_bound"])
+        weights["cs_c_rmax_bound"] = np.float32(inpt["w_cs_c_rmax_bound"])
 
-        weights["phie_dat"] = np.float64(inpt["w_phie_dat"])
-        weights["phis_c_dat"] = np.float64(inpt["w_phis_c_dat"])
-        weights["cs_a_dat"] = np.float64(inpt["w_cs_a_dat"])
-        weights["cs_c_dat"] = np.float64(inpt["w_cs_c_dat"])
+        weights["phie_dat"] = np.float32(inpt["w_phie_dat"])
+        weights["phis_c_dat"] = np.float32(inpt["w_phis_c_dat"])
+        weights["cs_a_dat"] = np.float32(inpt["w_cs_a_dat"])
+        weights["cs_c_dat"] = np.float32(inpt["w_cs_c_dat"])
     except KeyError:
         weights = None
 
@@ -388,9 +388,9 @@ def initialize_nn(args, input_params):
             data_phie = np.load(os.path.join(dataFolder, "data_phie.npz"))
             use_multi = False
             print("INFO: LOADING SINGLE DATASETS")
-        xTrain_phie = data_phie["x_train"].astype("float64")
-        yTrain_phie = data_phie["y_train"].astype("float64")
-        x_params_train_phie = data_phie["x_params_train"].astype("float64")
+        xTrain_phie = data_phie["x_train"].astype("float32")
+        yTrain_phie = data_phie["y_train"].astype("float32")
+        x_params_train_phie = data_phie["x_params_train"].astype("float32")
 
         if use_multi:
             data_phis_c = np.load(
@@ -398,43 +398,43 @@ def initialize_nn(args, input_params):
             )
         else:
             data_phis_c = np.load(os.path.join(dataFolder, "data_phis_c.npz"))
-        xTrain_phis_c = data_phis_c["x_train"].astype("float64")
-        yTrain_phis_c = data_phis_c["y_train"].astype("float64")
-        x_params_train_phis_c = data_phis_c["x_params_train"].astype("float64")
+        xTrain_phis_c = data_phis_c["x_train"].astype("float32")
+        yTrain_phis_c = data_phis_c["y_train"].astype("float32")
+        x_params_train_phis_c = data_phis_c["x_params_train"].astype("float32")
         if use_multi:
             data_cs_a = np.load(
                 os.path.join(dataFolder, "data_cs_a_multi.npz")
             )
         else:
             data_cs_a = np.load(os.path.join(dataFolder, "data_cs_a.npz"))
-        xTrain_cs_a = data_cs_a["x_train"].astype("float64")
-        yTrain_cs_a = data_cs_a["y_train"].astype("float64")
-        x_params_train_cs_a = data_cs_a["x_params_train"].astype("float64")
+        xTrain_cs_a = data_cs_a["x_train"].astype("float32")
+        yTrain_cs_a = data_cs_a["y_train"].astype("float32")
+        x_params_train_cs_a = data_cs_a["x_params_train"].astype("float32")
         if use_multi:
             data_cs_c = np.load(
                 os.path.join(dataFolder, "data_cs_c_multi.npz")
             )
         else:
             data_cs_c = np.load(os.path.join(dataFolder, "data_cs_c.npz"))
-        xTrain_cs_c = data_cs_c["x_train"].astype("float64")
-        yTrain_cs_c = data_cs_c["y_train"].astype("float64")
-        x_params_train_cs_c = data_cs_c["x_params_train"].astype("float64")
+        xTrain_cs_c = data_cs_c["x_train"].astype("float32")
+        yTrain_cs_c = data_cs_c["y_train"].astype("float32")
+        x_params_train_cs_c = data_cs_c["x_params_train"].astype("float32")
     else:
         nParams = 2
         print("INFO: LOADING DUMMY DATA")
         # Dummy data
-        xTrain_phie = np.zeros((N_BATCH, 1)).astype("float64")
-        yTrain_phie = np.zeros((N_BATCH, 1)).astype("float64")
-        x_params_train_phie = np.zeros((N_BATCH, nParams)).astype("float64")
-        xTrain_phis_c = np.zeros((N_BATCH, 1)).astype("float64")
-        yTrain_phis_c = np.zeros((N_BATCH, 1)).astype("float64")
-        x_params_train_phis_c = np.zeros((N_BATCH, nParams)).astype("float64")
-        xTrain_cs_a = np.zeros((N_BATCH, 2)).astype("float64")
-        yTrain_cs_a = np.zeros((N_BATCH, 1)).astype("float64")
-        x_params_train_cs_a = np.zeros((N_BATCH, nParams)).astype("float64")
-        xTrain_cs_c = np.zeros((N_BATCH, 2)).astype("float64")
-        yTrain_cs_c = np.zeros((N_BATCH, 1)).astype("float64")
-        x_params_train_cs_c = np.zeros((N_BATCH, nParams)).astype("float64")
+        xTrain_phie = np.zeros((N_BATCH, 1)).astype("float32")
+        yTrain_phie = np.zeros((N_BATCH, 1)).astype("float32")
+        x_params_train_phie = np.zeros((N_BATCH, nParams)).astype("float32")
+        xTrain_phis_c = np.zeros((N_BATCH, 1)).astype("float32")
+        yTrain_phis_c = np.zeros((N_BATCH, 1)).astype("float32")
+        x_params_train_phis_c = np.zeros((N_BATCH, nParams)).astype("float32")
+        xTrain_cs_a = np.zeros((N_BATCH, 2)).astype("float32")
+        yTrain_cs_a = np.zeros((N_BATCH, 1)).astype("float32")
+        x_params_train_cs_a = np.zeros((N_BATCH, nParams)).astype("float32")
+        xTrain_cs_c = np.zeros((N_BATCH, 2)).astype("float32")
+        yTrain_cs_c = np.zeros((N_BATCH, 1)).astype("float32")
+        x_params_train_cs_c = np.zeros((N_BATCH, nParams)).astype("float32")
 
     nn = myNN(
         params=params,
@@ -456,19 +456,19 @@ def initialize_nn(args, input_params):
         max_batch_size_data=MAX_BATCH_SIZE_DATA,
         n_batch=N_BATCH,
         n_batch_lbfgs=N_BATCH_LBFGS,
-        hard_IC_timescale=np.float64(HARD_IC_TIMESCALE),
+        hard_IC_timescale=np.float32(HARD_IC_TIMESCALE),
         exponentialLimiter=EXP_LIMITER,
         collocationMode=COLLOCATION_MODE,
         gradualTime_sgd=GRADUAL_TIME_SGD,
         gradualTime_lbfgs=GRADUAL_TIME_LBFGS,
         gradualTimeMode_lbfgs=GRADUAL_TIME_MODE_LBFGS,
-        firstTime=np.float64(HARD_IC_TIMESCALE * RATIO_FIRST_TIME),
+        firstTime=np.float32(HARD_IC_TIMESCALE * RATIO_FIRST_TIME),
         n_gradual_steps_lbfgs=N_GRADUAL_STEPS_LBFGS,
-        tmin_int_bound=np.float64(HARD_IC_TIMESCALE * RATIO_T_MIN),
+        tmin_int_bound=np.float32(HARD_IC_TIMESCALE * RATIO_T_MIN),
         nEpochs=EPOCHS,
         nEpochs_lbfgs=EPOCHS_LBFGS,
         nEpochs_start_lbfgs=EPOCHS_START_LBFGS,
-        initialLossThreshold=np.float64(LOSS_THRESHOLD),
+        initialLossThreshold=np.float32(LOSS_THRESHOLD),
         dynamicAttentionWeights=DYNAMIC_ATTENTION_WEIGHTS,
         annealingWeights=ANNEALING_WEIGHTS,
         useLossThreshold=USE_LOSS_THRESHOLD,
@@ -628,7 +628,7 @@ def initialize_nn_from_params_config(params, configDict):
         n_res_block_units=n_res_block_units,
         n_grad_path_layers=n_grad_path_layers,
         n_grad_path_units=n_grad_path_units,
-        hard_IC_timescale=np.float64(HARD_IC_TIMESCALE),
+        hard_IC_timescale=np.float32(HARD_IC_TIMESCALE),
         exponentialLimiter=EXP_LIMITER,
         activation=ACTIVATION,
         linearizeJ=LINEARIZE_J,
